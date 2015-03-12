@@ -1,0 +1,140 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[top=1.5in, bottom=1.5in, left=0.8in, right=0.8in]{geometry}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english,polish]{babel}
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\usepackage{indentfirst}
+\usepackage{hhline}
+\usepackage{fixltx2e}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{capt-of}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{listingsutf8}
+\usepackage{longtable}
+\usepackage{tikz}
+\usetikzlibrary{matrix,calc}
+\usepackage{listings}
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    tabsize=2,
+    rulecolor=\color{black!30},
+    title=\lstname,
+    escapeinside={\%*}{*)},
+    breaklines=\true,
+    breakatwhitespace=true,
+    framextopmargin=2pt,
+    framexbottommargin=2pt,
+    inputencoding=utf8x, 
+    extendedchars=\true,
+    literate={ą}{{\k{a}}}1
+             {Ą}{{\k{A}}}1
+             {ę}{{\k{e}}}1
+             {Ę}{{\k{E}}}1
+             {ó}{{\'o}}1
+             {Ó}{{\'O}}1
+             {ś}{{\'s}}1
+             {Ś}{{\'S}}1
+             {ł}{{\l{}}}1
+             {Ł}{{\L{}}}1
+             {ż}{{\.z}}1
+             {Ż}{{\.Z}}1
+             {ź}{{\'z}}1
+             {Ź}{{\'Z}}1
+             {ć}{{\'c}}1
+             {Ć}{{\'C}}1
+             {ń}{{\'n}}1
+             {Ń}{{\'N}}1
+}
+\renewcommand{\topfraction}{.85}
+\renewcommand{\bottomfraction}{.7}
+\renewcommand{\textfraction}{.15}
+\renewcommand{\floatpagefraction}{.66}
+\renewcommand{\dbltopfraction}{.66}
+\renewcommand{\dblfloatpagefraction}{.66}
+\addto\captionspolish{
+  \renewcommand{\contentsname}
+    {Spis treści}
+}
+
+\begin{document}
+
+\thispagestyle{empty}
+
+
+\hfill Wrocław, dn.\today\\
+\begin{minipage}[c]{0.4\columnwidth}
+  \textbf{Zespół:}\\
+  Piotr Chmiel\\
+  Tomasz Bagiński\\
+  Maciej Stelmaszuk\\
+  Jakub Stasiak\\
+  Jędrzej Urbański\\
+  Aleksandra Berjak\\
+  
+\end{minipage}
+\hfill
+\vspace{2.5cm}
+\begin{center}
+  \begin{LARGE}
+    \emph{ Aplikacje internetowe i rozproszone - projekt} \\
+  \end{LARGE}
+  \begin{Large}
+    \emph{ Analiza wymagań} \\
+  \end{Large}
+  \vspace{1.0cm}
+    Sprawdzenie czy zadany zbiór zaszyfrowanych haseł może (i w jakim czasie) zostać złamany za pomocą komputera równoległego jakim jest klaster stacji roboczych. Różne metody łamania haseł (słownikowa, brute force, tablice tęczowe)
+\end{center}
+
+\begin{center}
+  Rok akad. 2014/2015, kierunek: INF
+\end{center}
+\vspace{1.2cm}
+\begin{flushright}
+\begin{minipage}[t]{0.4\columnwidth}
+\noindent
+PROWADZĄCY:\\
+dr inż.~Henryk Maciejewski
+\end{minipage}
+\end{flushright}
+\vfill
+\newpage
+\tableofcontents{}
+\section{Wstęp}
+\subsection{Cel}
+Bla bla bla
+\subsection{Zakres}
+Bla bla bla
+\subsection{Przegląd dokumentu}
+Bla bla bla
+\section{Ogólny opis projektu}
+\subsection{Walory użytkowe i przydatność projektowanego systemu}
+Bla bla bla
+\subsection{Możliwości projektowanego systemu}
+Bla bla bla
+\subsection{Ograniczenia}
+Bla bla bla
+\subsection{Charakterystyka użytkowników}
+Bla bla bla
+\subsection{Środowisko operacyjne}
+Bla bla bla
+\subsection{Założenia i zależności}
+Bla bla bla
+\section{Wymagania}
+\subsection{Wymagania funkcjonalne (funkcje systemu)}
+Bla bla bla
+\subsection{Wymagania niefunkcjonalne (ograniczenia)}
+Bla bla bla
+\end{document}
