@@ -114,22 +114,45 @@ dr inż.~Henryk Maciejewski
 \tableofcontents{}
 \section{Wstęp}
 \subsection{Cel}
-Bla bla bla
+Celem tego dokumentu jest stworzenie specyfikacji wymagań dotyczących projektu realizowanego w ramach zajęć z przedmiotu  ``Aplikacje internetowe i rozproszone", która ma być podstawą do dalszej pracy w ramach projektu. Dokument pozwala też na weryfikację, stwierdzającą, czy wykonany system spełnia postawione wymagania.
 \subsection{Zakres}
-Bla bla bla
+W ramach projektu zrealizowany zostanie system udostępniający usługę zlecenia zadania obliczeniowego za pomocą przeglądarki internetowej. Zadanie obliczeniowe dotyczyć będzie sprawdzenia, czy zadany zbiór zaszyfrowanych haseł może (i w jakim czasie) zostać złamany za pomocą komputera równoległego - klastra stacji roboczych. W skład systemu wchodzić będą następujące komponenty:
+\begin{enumerate}
+\item Aplikacja kliencka do zlecania zadań przez użytkowników
+\item Serwer aplikacji
+\item Aplikacja równoległa wykonująca obliczenia
+\end{enumerate}
+Aplikacja kliencka powinna udostępniać użytkownikowi możliwość przekazywania do aplikacji parametrów dotyczących zlecanego zadania, takich jak na przykład zbiór haseł, wybrana metoda rozwiązywania problemu (np. tablice tęczowe, słownikowa, brute force) czy też maksymalny czas oczekiwania na otrzymanie rozwiązania. Celem systemu jest odnalezienie rozwiązania w czasie krótszym bądź równym estymowanemu czasowi znajdowania rozwiązania metodą brute force (obliczanego na podstawie długości hasła, wykorzystanego zbioru znaków oraz możliwości obliczeniowych klastra).
 \subsection{Przegląd dokumentu}
-Bla bla bla
+Sekcja ``Ogólny opis projektu" zawiera informacje dotyczące przydatności projektu, możliwości oraz ograniczeń projektowanego systemu, także pod kątem środowiska operacyjnego, charakterystykę jego użytkowników oraz założenia i zależności.
+W sekcji ``Wymagania" wyspecyfikowane zostały wymagania funkcjonalne oraz niefunkcjonalne dotyczące projektowanego systemu.
 \section{Ogólny opis projektu}
-\subsection{Walory użytkowe i przydatność projektowanego systemu}
-Bla bla bla
-\subsection{Możliwości projektowanego systemu}
-Bla bla bla
+\subsection{Przydatność projektowanego systemu i jego możliwości}
+Ze względu na ograniczone ramy czasowe projektu, zaprojektowana i stworzona przez nas implementacja systemu umożliwiającego zlecanie zadań obliczeniowych w komputerze równoległym będzie mniej zaawansowana niż inne dostępne na rynku narzędzia. Zakres projektu obejmuje zarówno aplikację kliencką dostępną przez przeglądarkę internetową, a także serwer oraz aplikację równoległą, dlatego wszystkie one zostały opisane w tym dokumencie. Poniższa listy zawiera funkcjonalności, które oferował będzie projektowany system z uwzględnieniem na podstawowe oraz dodatkowe.
+\begin{enumerate}
+\item Zlecanie zadania obliczeniowego dotyczącego łamania hasła
+\item Rejestracja użytkowników systemu
+\item Uwierzytelnianie i autoryzacja użytkowników systemu
+\item Tworzenie grup użytkowników z określonym poziomem uprawnień
+\item Dodanie hasła/zbioru haseł do złamania w postaci pliku lub wprowadzenie go poprzez dostępny w aplikacji klienckiej formularz
+\item Prowadzenie metryk dotyczących zużycia procesora i pamięci na stacjach roboczych dostępnych dla użytkowników o określonych poziomach uprawnień
+\item Możliwość śledzenia przez użytkowników historii zlecanych zadań obliczeniowych
+\item Możliwość zarządzania przez użytkownika zleconymi przez siebie zadaniami obliczeniowymi - edycja parametrów, usuwanie zadań
+\item Monitorowanie przez użytkownika postępu zleconego przez niego zadania poprzez tzw. ``pasek postępu"
+\item Powiadomienie użytkownika o zakończeniu zadania obliczeniowego za pomocą wiadomości e-mail/SMS
+\item Dołączanie do każdego zleconego zadania wyników obliczeń takich jak np. uzyskane hasło, czas wykonywania obliczeń
+\end{enumerate}
 \subsection{Ograniczenia}
-Bla bla bla
+Klaster obliczeniowy stanowić będzie grupa stacji roboczych pracujących w środowisku MPI. Realizacja projektu ma charakter iteracyjny. Około 60\% czasu przeznaczonego na projekt (iteracja 0) powinno zostać wykorzystane na stworzenie prototypu umożliwiającego weryfikację zaproponowanej architektury. W iteracji nr 1 rozwiązanie to zostanie rozbudowane. Technologie proponowane przy realizacji projeku to:
+\begin{enumerate}
+\item Serwer aplikacji: Python, Django/Flask
+\item Aplikacja równoległa: MPI (implementacja MPICH, C/C++, ew. Python),
+\item Strona klienta: HTML5, CSS, JavaScript (+ jQuery)
+\end{enumerate}
 \subsection{Charakterystyka użytkowników}
-Bla bla bla
+Użytkowników systemu stanowić będą studenci oraz kadra naukowa Politechniki Wrocławskiej. Nie jest planowane rozpowszechnianie systemu poza środowisko akademickie.
 \subsection{Środowisko operacyjne}
-Bla bla bla
+Stacje robocze będą realizować swoją rolę jako część klastra obliczeniowego przy użyciu wirtualnego środowiska skonfigurowanego specjalnie w tym celu.
 \subsection{Założenia i zależności}
 Bla bla bla
 \section{Wymagania}
