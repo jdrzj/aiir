@@ -22,6 +22,8 @@
 \usepackage{listingsutf8}
 \usepackage{longtable}
 \usepackage{tikz}
+\usepackage{tabularx}
+\usepackage{float}
 \usetikzlibrary{matrix,calc}
 \usepackage{listings}
 \lstset{
@@ -128,7 +130,7 @@ Sekcja ``Ogólny opis projektu" zawiera informacje dotyczące przydatności proj
 W sekcji ``Wymagania" wyspecyfikowane zostały wymagania funkcjonalne oraz niefunkcjonalne dotyczące projektowanego systemu.
 \section{Ogólny opis projektu}
 \subsection{Przydatność projektowanego systemu i jego możliwości}
-Ze względu na ograniczone ramy czasowe projektu, zaprojektowana i stworzona przez nas implementacja systemu umożliwiającego zlecanie zadań obliczeniowych w komputerze równoległym będzie mniej zaawansowana niż inne dostępne na rynku narzędzia. Zakres projektu obejmuje zarówno aplikację kliencką dostępną przez przeglądarkę internetową, a także serwer oraz aplikację równoległą, dlatego wszystkie one zostały opisane w tym dokumencie. Poniższa listy zawiera funkcjonalności, które oferował będzie projektowany system z uwzględnieniem na podstawowe oraz dodatkowe.
+Ze względu na ograniczone ramy czasowe projektu, zaprojektowana i stworzona przez nas implementacja systemu umożliwiającego zlecanie zadań obliczeniowych w komputerze równoległym będzie mniej zaawansowana niż inne dostępne na rynku narzędzia. Zakres projektu obejmuje zarówno aplikację kliencką dostępną przez przeglądarkę internetową, a także serwer oraz aplikację równoległą, dlatego wszystkie one zostały opisane w tym dokumencie. Poniższa listy zawiera funkcjonalności, które oferował będzie projektowany system.
 \begin{enumerate}
 \item Zlecanie zadania obliczeniowego dotyczącego łamania hasła
 \item Rejestracja użytkowników systemu
@@ -139,7 +141,7 @@ Ze względu na ograniczone ramy czasowe projektu, zaprojektowana i stworzona prz
 \item Możliwość śledzenia przez użytkowników historii zlecanych zadań obliczeniowych
 \item Możliwość zarządzania przez użytkownika zleconymi przez siebie zadaniami obliczeniowymi - edycja parametrów, usuwanie zadań
 \item Monitorowanie przez użytkownika postępu zleconego przez niego zadania poprzez tzw. ``pasek postępu"
-\item Powiadomienie użytkownika o zakończeniu zadania obliczeniowego za pomocą wiadomości e-mail/SMS
+\item Powiadomienie użytkownika o zakończeniu zadania obliczeniowego za pomocą wiadomości e-mail
 \item Dołączanie do każdego zleconego zadania wyników obliczeń takich jak np. uzyskane hasło, czas wykonywania obliczeń
 \end{enumerate}
 \subsection{Ograniczenia}
@@ -154,10 +156,262 @@ Użytkowników systemu stanowić będą studenci oraz kadra naukowa Politechniki
 \subsection{Środowisko operacyjne}
 Stacje robocze będą realizować swoją rolę jako część klastra obliczeniowego przy użyciu wirtualnego środowiska skonfigurowanego specjalnie w tym celu.
 \subsection{Założenia i zależności}
-Bla bla bla
+W ramach projektu podejmowane będą próby złamania haseł, które zostały przetworzone przy pomocy funkcji haszujących SHA-1 i MD5. Testy prototypu będą wykonywane na komputerach będących własnością grupy projektowej przy założeniu, że uda się poprawnie skonfigurować na nich środowisko. Celem weryfikacji, czy odnalezione przez system rozwiązanie jest poprawne, a hasło zostało złamane, system będzie znał faktyczne hasło, jednak jego znajomość nie będzie miała wpływu na wykonywane obliczenia. Komputery znajdujące się w klastrze mogą charakteryzować się inną specyfikację sprzętową i mieć różne możliwości obliczeniowe.
 \section{Wymagania}
 \subsection{Wymagania funkcjonalne (funkcje systemu)}
-Bla bla bla
+\subsubsection{Aplikacja kliencka}
+\begin{table}[H]
+\caption{Zlecenie zadania obliczeniowego}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 1 \\
+\hline
+Opis & Aplikacja pozwala użytkownikowi na zlecenia zadania obliczeniowego dotyczącego łamania hasła lub zbioru haseł. \\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Wyświetlanie paska postępu}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 2 \\
+\hline
+Opis & Aplikacja wyświetla pasek postępu zadania obliczeniowego wykonywane przez komputer równoległy.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Wprowadzenie hasła lub zbioru haseł w postaci oryginalnej i po działaniu algorytmu haszującego}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 3 \\
+\hline
+Opis & Użytkownik aplikacji ma możliwość podania listy haseł w formie pliku tekstowego lub też wprowadzenie ich w dostępnym w aplikacji klienckiej polu edycyjnym. Separator oddzielający poszczególne hasła powinien być jasno określony w formularzu dotyczącym zlecanego zadania obliczeniowego.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Określenie algorytmu haszującego}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 4 \\
+\hline
+Opis & Przed zleceniem zadania obliczeniowego, system prosi użytkownika o podanie algorytmu haszującego, jaki został wykorzystany przy haszowaniu haseł, które mają zostać poddane próbie złamania. Na jego podstawie sugeruje metodę rozwiązania problemu. \\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Oszacowanie czasu łamania hasła metodą brute force}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 5 \\
+\hline
+Opis & Na podstawie wprowadzonego poprawnego hasła (ilość znaków, zakres znaków, możliwości obliczeniowe klastra) system oblicza szacunkowy czas znajdowania odpowiedniego rozwiązania metodą brute force. \\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Śledzenie historii zleconych zadań obliczeniowych}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 6 \\
+\hline
+Opis & Użytkownik aplikacji klienckiej ma możliwość śledzenia historii zleconych przez siebie zadań obliczeniowych, czasu ich wykonywania, ich wyników.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Zarządzanie zleconymi zadaniami}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 7 \\
+\hline
+Opis & Użytkownik ma możliwość zarządzania parametrami zleconych przez siebie zadań oraz ich usuwania. Edycja zadania może mieć miejsce przed rozpoczęciem jego wykonywania. Zatrzymanie wykonywania zadania można zlecić zarówno przed jak i w trakcie jego wykonywania. \\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Uwierzytelnianie i autoryzacja użytkowników systemu}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 8 \\
+\hline
+Opis & Użytkownicy systemu logują się do systemu z wykorzystaniem unikalnego loginu i hasła.  \\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Rejestracja użytkowników}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 9 \\
+\hline
+Opis & Użytkownika ma możliwość korzystania z aplikacji klienckiej tylko po stworzeniu konta użytkownika powiązanego z konkretnym adresem e-mail.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Walidacja wprowadzanych danych}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore KLI\textunderscore 10 \\
+\hline
+Opis & Aplikacja kliencka waliduje dane wprowadzone przez użytkownika, odrzuca hasła lub zbiory haseł nie spełniające określonego schematu.\\
+\hline
+\end{tabularx}
+\end{table}
+\subsubsection{Serwer aplikacji}
+\begin{table}[H]
+\caption{Agregacja metryk dotyczących zużycia zasobów komputerów obliczeniowych}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore SER\textunderscore 1 \\
+\hline
+Opis & Serwer udostępnia statystyki dotyczące zużycia procesora i pamięci na komputerach wchodzących w skład klastra użytkownikom o poziomie uprawnień administratora.  \\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Tworzenie grup użytkowników o określonych poziomach uprawnień}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore SER\textunderscore 2 \\
+\hline
+Opis & Przynależność użytkownika do konkretnych grup/y określa jego prawo do korzystania z konkretnych zasobów systemu\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Monitorowanie zużycia zasobów przez komputery należące do klastra}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore SER\textunderscore 3 \\
+\hline
+Opis & Serwer monitoruje poziom zużycia zasobów takich jak procent zużycia CPU na komputerach należących do klastra. W rozbudownanej wersji architektury może zostać zaimplementowana funkcjonalność przekierowania części obliczeń z komputera, na którym zużycie CPU osiągnęło zbyt wysoki poziom. \\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Zlecanie zadań obliczeniowych}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore SER\textunderscore 4 \\
+\hline
+Opis & System zleca węzłom rozwiązanie określonego zadania obliczeniowego za pomocą protokołu ustalonego w toku pracy nad projektem.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Monitorowanie stanu wykonywania zadania}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore SER\textunderscore 5 \\
+\hline
+Opis & Serwer komunikuje się z węzłami i na podstawie otrzymanych danych określa poziom wykonywania zadania obliczeniowego, który udostępnia aplikacji klienckiej.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Zlecenie węzłowi zadania na podstawie jego mocy obliczeniowej}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore SER\textunderscore 6 \\
+\hline
+Opis & Na podstawie danych dotyczących specyfikacji komputera oraz wyników prostych testów, serwer ustala współczynnik mocy obliczeniowej komputera w stosunku do całego klastra i na tej podstawie określa, jak duże zadanie obliczeniowe może mu przydzielić, by zrównoważyć czas jego wykonywania na wszystkich stacjach roboczych.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Informowanie użytkownika o zakońćzeniu zadania obliczeniowego}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore SER\textunderscore 7 \\
+\hline
+Opis & Po zakończeniu wykonywania zadania obliczeniowego, serwer wysyła użytkownikowi zlecającemu je wiadomość e-mail informującą o wynikach obliczeń.\\
+\hline
+\end{tabularx}
+\end{table}
+\subsubsection{Aplikacja równoległa}
+\begin{table}[H]
+\caption{Wykonywanie zadania obliczeniowego}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore WEZ\textunderscore 1 \\
+\hline
+Opis & Aplikacja równoległa wykonuje zlecone jej przez serwer zadanie obliczeniowe.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Raportowanie postępu w wykonywaniu zadania}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore WEZ\textunderscore 2 \\
+\hline
+Opis & Aplikacji kliencka wysyła serwerowi informacje dotyczące postępu wykonywania zadania w odstępach jednego procenta.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Udostępnianie danych dotyczących zużycia zasobów}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & FUN\textunderscore WEZ\textunderscore 3 \\
+\hline
+Opis & Na żądanie serwera aplikacja udostępnia dane dotyczące aktualnego zużycia zasobów na danej stacji roboczej takich jak zużycie CPU czy pamięci.\\
+\hline
+\end{tabularx}
+\end{table}
 \subsection{Wymagania niefunkcjonalne (ograniczenia)}
-Bla bla bla
+\begin{table}[H]
+\caption{Interfejs użytkownika aplikacji klienckiej}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & NONFUN\textunderscore 1 \\
+\hline
+Opis & Aplikacja kliencka powinna posiadać graficzny interfejs użytkownika, być przejrzysta, intuicyjna i łatwa w obsłudze.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Język aplikacji}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & NONFUN\textunderscore 2 \\
+\hline
+Opis & Interfejs aplikacji klienckiej powinien być dostępny w języku polskim lub angielskim.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Przenośność aplikacji równoległych}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & NONFUN\textunderscore 3 \\
+\hline
+Opis & Aplikacje równoległe powinny mieć możliwość łatwej adaptacji do różnych systemów operacyjnych.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Skalowalność}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & NONFUN\textunderscore 3 \\
+\hline
+Opis & System powinien być skalowalny, należy uwzględnić możliwość zwiększenia ilości stacji roboczych nawet dziesięciokrotnie.\\
+\hline
+\end{tabularx}
+\end{table}
+\begin{table}[H]
+\caption{Zdolność adaptacji do możliwości danej stacji roboczej}
+\begin{tabularx}{\textwidth}{ |l|X| }
+\hline
+ID & NONFUN\textunderscore 3 \\
+\hline
+Opis & System powinien indywidualnie rozpatrywać możliwości obliczeniowe każdej ze stacji roboczych i na ich podstawie określać zlecany jej nakład pracy.\\
+\hline
+\end{tabularx}
+\end{table}
+
 \end{document}
