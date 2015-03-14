@@ -156,7 +156,7 @@ Użytkowników systemu stanowić będą studenci oraz kadra naukowa Politechniki
 \subsection{Środowisko operacyjne}
 Stacje robocze będą realizować swoją rolę jako część klastra obliczeniowego przy użyciu wirtualnego środowiska skonfigurowanego specjalnie w tym celu.
 \subsection{Założenia i zależności}
-W ramach projektu podejmowane będą próby złamania haseł, które zostały przetworzone przy pomocy funkcji haszujących SHA-1 i MD5. Testy prototypu będą wykonywane na komputerach będących własnością grupy projektowej przy założeniu, że uda się poprawnie skonfigurować na nich środowisko. Celem weryfikacji, czy odnalezione przez system rozwiązanie jest poprawne, a hasło zostało złamane, system będzie znał faktyczne hasło, jednak jego znajomość nie będzie miała wpływu na wykonywane obliczenia. Komputery znajdujące się w klastrze mogą charakteryzować się inną specyfikację sprzętową i mieć różne możliwości obliczeniowe.
+W ramach projektu podejmowane będą próby złamania haseł, które zostały przetworzone przy pomocy funkcji haszujących SHA-1 i MD5. Testy prototypu będą wykonywane na komputerach będących własnością grupy projektowej przy założeniu, że uda się poprawnie skonfigurować na nich środowisko. Komputery znajdujące się w klastrze mogą charakteryzować się inną specyfikację sprzętową i mieć różne możliwości obliczeniowe.
 \section{Wymagania}
 \subsection{Wymagania funkcjonalne (funkcje systemu)}
 \subsubsection{Aplikacja kliencka}
@@ -181,7 +181,7 @@ Opis & Aplikacja wyświetla pasek postępu zadania obliczeniowego wykonywane prz
 \end{tabularx}
 \end{table}
 \begin{table}[H]
-\caption{Wprowadzenie hasła lub zbioru haseł w postaci oryginalnej i po działaniu algorytmu haszującego}
+\caption{Wprowadzenie hasła lub zbioru haseł}
 \begin{tabularx}{\textwidth}{ |l|X| }
 \hline
 ID & FUN\textunderscore KLI\textunderscore 3 \\
@@ -206,7 +206,7 @@ Opis & Przed zleceniem zadania obliczeniowego, system prosi użytkownika o podan
 \hline
 ID & FUN\textunderscore KLI\textunderscore 5 \\
 \hline
-Opis & Na podstawie wprowadzonego poprawnego hasła (ilość znaków, zakres znaków, możliwości obliczeniowe klastra) system oblicza szacunkowy czas znajdowania odpowiedniego rozwiązania metodą brute force. \\
+Opis & Na podstawie wprowadzonego algorytmu, jakim zahaszowane zostało hasło, oraz danych dotyczących wydajności obliczeniowej klastra, system oblicza szacunkowy czas znajdowania odpowiedniego rozwiązania metodą brute force. \\
 \hline
 \end{tabularx}
 \end{table}
