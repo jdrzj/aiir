@@ -1,0 +1,28 @@
+{% extends 'aplikacja_kliencka/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}O projekcie{% endblock %}
+{% block body_block %}
+
+    <link rel="stylesheet" href="/static/css/about_project.css"/>
+    <div class="about_project_container center-block" role="main" align="middle">
+
+        <div class="jumbotron" >
+            <h1>Tytuł projektu</h1>
+            <p>Sprawdzenie czy zadany zbiór zaszyfrowanych haseł może (i jakim czasie) zostać złamany za pomocą komputera
+                równoległego jakim jest klaster stacji roboczych.</p>
+        </div>
+        <div class="jumbotron">
+            <h1>Zakres projektu</h1>
+            <p align="justify">W ramach projektu zrealizowany zostanie system udostępniający usługę zlecenia zadania
+                obliczeniowego za pomocą przeglądarki internetowej. Zadanie obliczeniowe dotyczyć będzie sprawdzenia, czy
+                zadany zbiór zaszyfrowanych haseł może (i w jakim czasie) zostać złamany za pomocą komputera równoległego
+                - klastra stacji roboczych. W skład systemu wchodzić będą następujące komponenty: <br>
+                - Aplikacja kliencka do zlecania zadań <br>
+                - Serwer aplikacji <br>
+                - Aplikacja równoległa do wykonywania działań </p>
+        </div>
+    </div>
+
+{% endblock %}

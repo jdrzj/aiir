@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head lang="pl">
+    {% load staticfiles %}
+    <link rel="stylesheet" href="/static/css/bootstrap.css"/>
+    <link rel="stylesheet" href="/static/css/bootstrap-theme.css"/>
+    <script src="/static/js/jquery-2.1.3.js" type="text/javascript"></script>
+    <script src="/static/js/bootstrap.js" type="text/javascript"></script>
+
+    <meta charset="UTF-8">
+    <title>{% block title %}Łamacze Haseł{% endblock %}</title>
+</head>
+<body>
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href= {% url "aplikacja_kliencka:home" %}>Łamacze haseł</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li class="dropdown">
+            {% if user.is_authenticated %}
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Mój profil<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'aplikacja_kliencka:edit_profile' %}">Edytuj profil</a></li>
+                <li><a href="{% url 'aplikacja_kliencka:password_change' %}">Zmień hasło</a></li>
+              </ul>
+            </li>
+                {% if user.is_superuser %}
+                    <li class=><a href="/admin">Admin</a></li>
+                {% endif %}
+                <li><a href={% url 'aplikacja_kliencka:hash_generator' %}>Hash Generator</a></li>
+            {% endif %}
+          </ul>
+                <div class="nav navbar-nav navbar-right ">
+                {% if user.is_authenticated %}
+                     <ul class="nav navbar-nav">
+                          <li>
+                            <p class="navbar-text">Witaj, {{ user.username }} !</p>
+                          </li>
+                          </ul>
+                    <form class="navbar-form navbar-right" >
+                      <a href="{% url 'aplikacja_kliencka:logout' %}?next={% url 'aplikacja_kliencka:home' %}">
+                          <button type="button" class="btn btn-danger" value="Wyloguj">Wyloguj się</button>
+                      </a>
+                  </form>
+                {% else %}
+                <ul class="nav navbar-nav">
+                    <li><a href="{% url 'aplikacja_kliencka:register' %}">Rejestracja</a></li>
+                </ul>
+
+                <form class="navbar-form navbar-right" role="form" method="post" action={% url 'aplikacja_kliencka:login' %}>
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="text" placeholder="Login" class="form-control" id="id_username"
+                               maxlength="254" name="username" type="text" required autofocus=""/>
+                    </div>
+                    <div class="form-group">
+                        <input type="password" placeholder="Hasło" class="form-control"
+                               id="id_password" name="password" type="password" required />
+                    </div>
+                    <button type="submit" class="btn btn-success">Zaloguj się</button>
+                </form>
+                {% endif %}
+                </div>
+        </div>
+      </div>
+    </nav>
+
+    {% block body_block %}{% endblock %}
+    {% block content %}{% endblock %}
+</body>
+</html>
+<script>
+    $(".nav a").on("click", function(){
+    $(".nav").find(".active").removeClass("active");
+    $(this).parent().addClass("active");
+});
+</script>

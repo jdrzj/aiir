@@ -1,0 +1,13 @@
+{% extends 'aplikacja_kliencka/base.html' %}
+{% load staticfiles %}
+{% block title %}Rejestracja zakończona powodzeniem{% endblock %}
+{% block content %}
+
+<div class="container theme-showcase" role="main" style="margin-top: 100px">
+      <div class="jumbotron">
+        <h2>Rejestracja zakończona powodzeniem !</h2>
+        <p><a href={% url "aplikacja_kliencka:login" %}>Możesz się zalogować :-)</a></p>
+      </div>
+</div>
+
+{% endblock %}

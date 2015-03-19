@@ -1,0 +1,86 @@
+{% extends 'aplikacja_kliencka/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Hash Generator{% endblock %}
+{% block body_block %}
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/hashgenerator.css"/>
+    <div class="container hash_generator_container center-block">
+        <div class="row pad-top">
+            <div class="col-md-8 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong> Hash Generator</strong>
+                    </div>
+                    <div class="panel-body">
+                        <form role="form" method="post" action=".">
+                            <br/>
+                            {% csrf_token %}
+                            {% if error_message %}
+                                {% for key, value in error_message.items %}
+                                    <p class="bg-danger" style = "height : 65px; text-align: center">
+                                        <br><strong>{{ key }} : {{ value }}</strong></br>
+                                    </p>
+                                {% endfor %}
+                            {% endif %}
+
+                            <div class="form-group input-group">
+                                <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
+                                <input type="text" class="form-control" placeholder="Tekst do hashowania" id="hash_text"
+                                       name="hash_text" type="text" required/>
+                            </div>
+
+                            <button type="submit" class="btn btn-success btn-sm hashuj">Hashuj</button>
+                            <hr />
+                        </form>
+
+                    <span class="label label-default">Długość wprowadzonego tekstu</span>
+                        <div class="form-group input-group">
+                            <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
+                            <input type="text" class="form-control" placeholder="Długość wprowadzonego tekstu"
+                                   id="length" name="length" type="text" required readonly/>
+                        </div>
+                        </form>
+
+                        <span class="label label-default">SHA-1</span>
+                            <div class="form-group input-group">
+                                <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
+                                <input type="text" class="form-control" placeholder="Hash SHA-1" id="sha-1" name="sha-1"
+                                       type="text" required readonly/>
+                            </div>
+
+                        <span class="label label-default">MD5</span>
+                            <div class="form-group input-group">
+                                <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
+                                <input type="text" class="form-control" placeholder="Hash MD5" id="md5"  name="md5" type="text" required readonly/>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <script>
+    $(document).on("click", ".hashuj", function(e) {
+        var hash = $('input[name=hash_text]').val();
+        var url = "/generate_hash/";
+                    e.preventDefault();
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: {'text_to_hash': hash},
+                        success: function(data){
+                            message = '<span class="' + data.status + '">' + data.result + '</span> ';
+                            message = ( data.status == 'success' ) ? message + data.fileLink : message
+                            document.getElementById("md5").value = data.md5;
+                            document.getElementById("sha-1").value = data.sha1;
+                            document.getElementById("length").value = data.text_length;
+                        }
+                   })});
+
+    </script>
+{% endblock %}

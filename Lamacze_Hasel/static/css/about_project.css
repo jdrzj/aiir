@@ -1,0 +1,31 @@
+.about_project_container {
+    margin-top: 100px;
+}
+
+.jumbotron {
+    background-color: rgba(255,255,255,0.5);
+    margin : 50px;
+
+
+}
+.jumbotron h1 {
+
+    text-decoration: none;
+    font-family: Cursive;
+    font-size: 70px;
+}
+.jumbotron p {
+    margin : 15px;
+    text-decoration: none;
+    font-family: Cursive;
+    font-size: 20px;
+}
+
+
+body {
+  background: url(http://upload.wikimedia.org/wikipedia/commons/0/00/Coastal-rocks.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
