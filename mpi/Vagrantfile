@@ -12,7 +12,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   config.vm.box = "ubuntu/trusty64"
   # use a minimal amount of RAM for each node to avoid overwhelming the host
   config.vm.provider "virtualbox" do |v|
-    v.memory = 256
+    v.memory = 1024
     v.cpus = 1
   end
   config.vm.network "private_network", type: "dhcp"
@@ -56,6 +56,30 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       cat /home/vagrant/.ssh/id_rsa.pub >> /home/vagrant/.ssh/authorized_keys
       apt-get -y install openmpi-bin openmpi-common openssh-client openssh-server libopenmpi-dev libopenmpi1.6-dbg libopenmpi1.6 build-essential htop
       touch /etc/.provisioned
+    fi
+    if [ `hostname` = "node1" ]; then
+      if [[ ! -e /etc/.provisioned1 ]]; then
+        apt-get install libboost-all-dev cmake git rabbitmq-server libssl-dev -y
+        mkdir ~/tmp && cd ~/tmp
+        wget https://github.com/alanxz/rabbitmq-c/archive/v0.6.0.tar.gz -O ~/tmp/v0.6.0.tar.gz
+        gunzip v0.6.0.tar.gz
+        tar -xvf v0.6.0.tar
+        cd rabbitmq-c-0.6.0
+        mkdir build && cd build
+        cmake ..
+        cmake --build . --target install 
+        cd ~/tmp
+        git clone https://github.com/alanxz/SimpleAmqpClient
+        cd SimpleAmqpClient
+        mkdir build && cd build
+        cmake ..
+        make
+        make install
+        echo "127.0.0.1 localhost" >> /etc/hosts      
+        
+        rm -rf ~/tmp
+        touch /etc/.provisioned1
+      fi
     fi
   SCRIPT
   script.sub! 'N_VMS', N_VMS.to_s
