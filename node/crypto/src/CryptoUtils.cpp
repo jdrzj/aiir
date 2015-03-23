@@ -29,7 +29,7 @@ std::string CryptoUtils::convertHashToHexRep(Hash& hash)
 
 // Porównuje reprezentacje dwóch hashy w postaci dwóch wektorów
 // 20-bajtowych.
-bool CryptoUtils::compareTwoHashes(Hash& first, Hash& second)
+bool CryptoUtils::areHashesEqual(Hash& first, Hash& second)
 {
 	return std::equal(first.getByteVector().begin(), first.getByteVector().end(),
 		second.getByteVector().begin());
