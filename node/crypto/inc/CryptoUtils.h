@@ -81,5 +81,5 @@ class CryptoUtils
 public:
 	static Hash generateSHA1(const std::string& text);
 	static std::string convertHashToHexRep(Hash& hash);
-	static bool compareTwoHashes(Hash& first, Hash& second);
+	static bool areHashesEqual(Hash& first, Hash& second);
 };
