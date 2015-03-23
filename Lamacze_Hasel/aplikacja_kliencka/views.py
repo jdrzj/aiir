@@ -23,9 +23,10 @@ def register(request):
 
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
-
         if user_form.is_valid() and request.POST['password'] == request.POST['password_repeat']:
-            user_form.save()
+            user = user_form.save()
+            user.set_password(user.password)
+            user.save()
             return render(request, "aplikacja_kliencka/register_success.html", context)
 
         else:
@@ -56,7 +57,6 @@ def login(request):
     if request.method == 'POST':
         username = request.POST['username']
         password = request.POST['password']
-
         requested_username = authenticate(username=username, password=password)
 
         if requested_username:
