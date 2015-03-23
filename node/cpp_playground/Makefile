@@ -1,3 +1,3 @@
 main: main.cpp
-	g++ -o main main.cpp -lcrypto -lssl
+	g++-4.8 -o main main.cpp -lcrypto -lssl
 

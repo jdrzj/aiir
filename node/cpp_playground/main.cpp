@@ -22,42 +22,42 @@ std::string sha(unsigned char * phrase, int length) {
     for(int i = 0; i < SHA_DIGEST_LENGTH; i++){
         stream << std::setw(2) << std::setfill('0') << std::hex << (int)hash[i];
     }
-    
+
     return stream.str();
 }
 
 
 
 int main(int argc, const char * argv[]) {
-    
 
-    
+
+
     if (argc == 1){
         std::cout << "No password given" << std::endl;
         return 0;
     }
-    
-    std::string dictionary_file = argv[2];
+
+    const char * dictionary_file = argv[2];
     std::string password = argv[1];
-    
+
     std::cout << "Password to hack: " << password << std::endl;
     std::cout << "Dictionary: " << dictionary_file << std::endl;
-    
+
     std::fstream dictionary;
     dictionary.open(dictionary_file, std::ios::in);
     std::string line;
-    
+
     if (dictionary.good()) {
         unsigned char *temp_uc;
         std::cout << "Starting hackin..." << std::endl;
         while (std::getline(dictionary, line)){
-            
+
             //std::cout << line << std::endl;
             int len = line.length();
             temp_uc = new unsigned char[len];
             strcpy( (char*) temp_uc, line.c_str() );
             //std::cout << "długość - " << len << "  line - " << line << "  temp_uc - " << temp_uc << std::endl;
-            
+
             if(sha(temp_uc, len) == password){
                 std::cout << "JACKPOT!" << std::endl;
                 std::cout << line << std::endl;
@@ -65,10 +65,11 @@ int main(int argc, const char * argv[]) {
                 return 0;
             }
         }
+        std::cout << "no match" << std::endl;
     } else {
         std::cout << "ERR with file" << std::endl;
     }
-    
-    
+
+
     return 0;
 }
