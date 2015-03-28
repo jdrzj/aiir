@@ -1,6 +1,6 @@
 #include <iostream>
 #include <string>
-#include <vector>
+#include <memory>
 #include <utility>
 
 // Jak głosi dokumentacja OpenSSL:
@@ -17,7 +17,7 @@ class Hash
 {
 	HashingFunction function;
 	int size;
-	std::vector<unsigned char> hash_byte_rep;
+	std::shared_ptr<unsigned char> hash_byte_rep;
 
 public:
 
@@ -29,7 +29,7 @@ public:
 			size = SHA_HASH_LENGTH;
 		// ... i tak dalej
 
-		hash_byte_rep.reserve(size);
+		hash_byte_rep = std::shared_ptr<unsigned char>(new unsigned char[20]);
 	}
 
 	// Destruktor
@@ -41,8 +41,8 @@ public:
 	Hash(const Hash& other)
     	: function(other.function)
     	, size(other.size)
+		, hash_byte_rep(other.hash_byte_rep)
 	{
-	    std::copy(other.hash_byte_rep.begin(), other.hash_byte_rep.end(), hash_byte_rep.begin()); 
 	}
 
 	// Operator przypisania
@@ -59,20 +59,13 @@ public:
 		return size;
 	}
 
-	// Zwraca referencję na wektor zawierający hash w postaci bajtów. Modyfikacja tego wektora
-	// raczej niezalecana, bo może popsuć sporo spraw :)
-	std::vector<unsigned char>& getByteVector()
-	{
-		return hash_byte_rep;
-	}
-
 	// Zwraca wskaźnik na hash w postaci tablicy bajtów, takiej, jaką otrzymaliśmy
 	// z OpenSSL-owego SHA-1. Dla niepustego wektora (obudowującego tablicę), zwraca &front().
 	// Uwaga: Wykorzystywane do zapisu przez funkcję generate SHA-1, więc musi być prealokowane
 	// tak, by móc pomieścić odpowiedni rozmiar hasha (patrz wywołanie metody reserve w konstruktorze).
 	unsigned char* getByteArray()
 	{
-		return hash_byte_rep.data();
+		return hash_byte_rep.get();
 	}
 };
 

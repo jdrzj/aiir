@@ -5,6 +5,7 @@
 #include <string>
 #include <sstream>
 #include <iomanip>
+#include <algorithm>
 
 // Na podstawie zmiennej std::string generuje i zwraca jej hash stworzony
 // przy pomocy funkcji SHA1 dostępnej w bibliotece OpenSSL.
@@ -31,6 +32,6 @@ std::string CryptoUtils::convertHashToHexRep(Hash& hash)
 // 20-bajtowych.
 bool CryptoUtils::areHashesEqual(Hash& first, Hash& second)
 {
-	return std::equal(first.getByteVector().begin(), first.getByteVector().end(),
-		second.getByteVector().begin());
+	return std::equal(first.getByteArray(), first.getByteArray() + first.getSize(),
+		second.getByteArray());
 }
