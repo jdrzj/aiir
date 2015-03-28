@@ -1,6 +1,8 @@
 from django.conf.urls import patterns, url
 from django.contrib import admin
 from aplikacja_kliencka import views
+from aplikacja_kliencka import mpi_send
+from aplikacja_kliencka import mpi_listen
 
 
 admin.autodiscover()
@@ -15,4 +17,5 @@ urlpatterns = patterns('',
     url(r'^generate_hash/$', views.generate_hash, name='generate_hash'),
     url(r'^about_project/$', views.about_project, name='about_project'),
     url(r'^edit_profile/$', views.edit_profile, name='edit_profile'),
+    url(r'^mpi_send$', mpi_send.send, name='mpi_send')
 )

@@ -1,7 +1,0 @@
-cmake_minimum_required(VERSION 2.8)
-project( main )
-find_package( Boost REQUIRED )
-include_directories(${Boost_INCLUDE_DIRS}) 
-ADD_DEFINITIONS(-DBoost_USE_STATIC_LIBS=ON)
-add_executable( test6 test6.cpp )
-target_link_libraries( test6 ${Boost_LIBRARIES} )

@@ -80,6 +80,12 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
         rm -rf ~/tmp
         touch /etc/.provisioned1
       fi
+      if [[ ! -e /etc/.provisioned2 ]]; then
+        ln -s /usr/local/lib/libSimpleAmqpClient.so.2 /usr/lib/libSimpleAmqpClient.so.2
+        ln -s /usr/local/lib/x86_64-linux-gnu/librabbitmq.so.4 /usr/lib/librabbitmq.so.4
+        
+        touch /etc/.provisioned1
+      fi
     fi
   SCRIPT
   script.sub! 'N_VMS', N_VMS.to_s

@@ -2,6 +2,8 @@
 # http://github.com/github/gitignore/blob/master/Python.gitignore
 
 # Byte-compiled / optimized / DLL files
+.vagrant
+
 __pycache__/
 *.py[cod]
 # C extensions
