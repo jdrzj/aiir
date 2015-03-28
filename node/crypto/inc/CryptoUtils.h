@@ -29,7 +29,7 @@ public:
 			size = SHA_HASH_LENGTH;
 		// ... i tak dalej
 
-		hash_byte_rep = std::shared_ptr<unsigned char>(new unsigned char[20]);
+		hash_byte_rep = std::shared_ptr<unsigned char>(new unsigned char[size]);
 	}
 
 	// Destruktor
