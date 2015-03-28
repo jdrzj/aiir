@@ -1,3 +1,6 @@
+#ifndef CRYPTO_CRYPTO_UTILS_H
+#define CRYPTO_CRYPTO_UTILS_H
+
 #include <iostream>
 #include <string>
 #include <memory>
@@ -15,21 +18,21 @@ enum class HashingFunction { SHA1 /*MD5, itd.*/ };
 // przeszłości powinna zostać rozszerzona.
 class Hash
 {
-	HashingFunction function;
-	int size;
-	std::shared_ptr<unsigned char> hash_byte_rep;
+	HashingFunction function_;
+	int size_;
+	std::shared_ptr<unsigned char> hash_byte_rep_;
 
 public:
 
 	// Konstruktor
 	Hash(HashingFunction function)
+	: function_(function)
 	{
-		this->function = function;
-		if (this->function == HashingFunction::SHA1)
-			size = SHA_HASH_LENGTH;
+		if (function_ == HashingFunction::SHA1)
+			size_ = SHA_HASH_LENGTH;
 		// ... i tak dalej
 
-		hash_byte_rep = std::shared_ptr<unsigned char>(new unsigned char[size]);
+		hash_byte_rep_ = std::shared_ptr<unsigned char>(new unsigned char[size_]);
 	}
 
 	// Destruktor
@@ -39,33 +42,31 @@ public:
 
 	// Konstruktor kopiujący
 	Hash(const Hash& other)
-    	: function(other.function)
-    	, size(other.size)
-		, hash_byte_rep(other.hash_byte_rep)
+		: function_(other.function_)
+		, size_(other.size_)
+		, hash_byte_rep_(other.hash_byte_rep_)
 	{
 	}
 
 	// Operator przypisania
 	Hash& operator=(Hash& other)
 	{
-		std::swap(function, other.function);
-		std::swap(size, other.size);
-		std::swap(hash_byte_rep, other.hash_byte_rep);
+		std::swap(function_, other.function_);
+		std::swap(size_, other.size_);
+		std::swap(hash_byte_rep_, other.hash_byte_rep_);
 		return *this;
 	}
 
 	int getSize() const
 	{
-		return size;
+		return size_;
 	}
 
 	// Zwraca wskaźnik na hash w postaci tablicy bajtów, takiej, jaką otrzymaliśmy
-	// z OpenSSL-owego SHA-1. Dla niepustego wektora (obudowującego tablicę), zwraca &front().
-	// Uwaga: Wykorzystywane do zapisu przez funkcję generate SHA-1, więc musi być prealokowane
-	// tak, by móc pomieścić odpowiedni rozmiar hasha (patrz wywołanie metody reserve w konstruktorze).
+	// z OpenSSL-owego SHA-1.
 	unsigned char* getByteArray()
 	{
-		return hash_byte_rep.get();
+		return hash_byte_rep_.get();
 	}
 };
 
@@ -76,3 +77,5 @@ public:
 	static std::string convertHashToHexRep(Hash& hash);
 	static bool areHashesEqual(Hash& first, Hash& second);
 };
+
+#endif // CRYPTO_CRYPTO_UTILS_H
