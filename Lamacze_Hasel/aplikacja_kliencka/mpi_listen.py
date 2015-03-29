@@ -1,5 +1,6 @@
 from aplikacja_kliencka.models import *
 from threading import Thread
+from datetime import datetime
 from django.db.models import F
 import pika
 import json
@@ -7,7 +8,6 @@ import json
 connection = pika.BlockingConnection(pika.ConnectionParameters(host='node1'))
 channel = connection.channel()
 channel.exchange_declare(exchange='mpi.results', type='direct')
-# channel.exchange_declare(exchange='mpi.results', type='fanout')
 
 channel.basic_qos(prefetch_count=1)
 result = channel.queue_declare(exclusive=True)
@@ -20,6 +20,7 @@ class GetMessage(Thread):
 			result = json.loads(body.decode('utf-8'))
 			password = Password.objects.filter(id=result['id'])[0]
 			password.password = result['password']
+			password.end_time = datetime.now()
 			password.save()
 
 			print('Received')

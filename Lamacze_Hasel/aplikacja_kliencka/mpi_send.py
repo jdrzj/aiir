@@ -17,7 +17,7 @@ def send(request):
 
 		task = Task(status=0, user=request.user, cluster=reqData['cluster'])
 		task.save()
-		passwords = [Password(hash=h, task=task) for h in reqData['hashes']]
+		passwords = [Password(hash=h['hash'], algorithm=h['algorithm'], task=task) for h in reqData['hashes']]
 		for password in passwords:
 			password.save()
 		channel.basic_publish(exchange='mpi.tasks', routing_key=task.cluster, body=json.dumps(task.json()['passwords']))
