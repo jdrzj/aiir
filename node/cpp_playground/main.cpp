@@ -17,6 +17,26 @@
 #include <cmath>
 #include "boost/dynamic_bitset.hpp"
 
+const int max_level = 3;
+const std::string suffixes = "1234567890!@#$^&*()_+{}";
+
+
+void check_suffixes(std::string pass, int level = 0){
+
+    if(level != max_level)
+    {
+        std::string pass2 = pass;
+        for(int i = 0; i < suffixes.length(); i++)
+        {
+            pass2 = pass;
+            pass2 += suffixes[i];
+            std::cout << pass2 << std::endl;
+
+            check_suffixes(pass2, level+1);
+        }
+    }
+
+}
 
 void hackify(std::string pass)
 {
@@ -32,7 +52,7 @@ void hackify(std::string pass)
         pass2 = pass;
         const boost::dynamic_bitset<> b2(x, i);
         boost::to_string(b2, s);
-        std::cout << s << std::endl;
+        //std::cout << s << std::endl;
         for(int j = 0; j < s.length(); j++)
         {
             //std::cout << s[j] << std::endl;
@@ -45,7 +65,8 @@ void hackify(std::string pass)
                 pass2[j] = tolower(pass[j]);
             }
         }
-        std::cout << pass2 << std::endl;
+        check_suffixes(pass2);
+        //std::cout << pass2 << std::endl;
     }
 
 }
@@ -53,11 +74,13 @@ void hackify(std::string pass)
 
 int main(int argc, const char * argv[]) {
 
-    std::string password = "lemon";
-
-    std::cout << "Password to hack: " << password << std::endl;
+    std::string password = "password";
+    //std::cout << "Password to hack: " << password << std::endl;
     hackify(password);
-    password[0] = toupper (password[0]);
-    std::cout << password << std::endl;
+    //password[0] = toupper (password[0]);
+    //std::cout << password << std::endl;
+
+    //check_suffixes("a");
+
     return 0;
 }
