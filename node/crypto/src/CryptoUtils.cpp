@@ -24,7 +24,7 @@ std::string CryptoUtils::convertHashToHexRep(Hash& hash)
 	std::stringstream ss;
     ss << std::hex;
     for (int i(0); i < hash.getSize(); ++i)
-        ss << static_cast<int>(hash.getByteArray()[i]);
+        ss << std::setw(2) << std::setfill('0') << static_cast<int>(hash.getByteArray()[i]);
     return ss.str();
 }
 
