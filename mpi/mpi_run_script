@@ -1,0 +1,55 @@
+# /bin/sh
+
+LOG_FILE=/var/log/mpi/mpi.log
+PID_FILE=/var/run/mpi/pid
+
+# Check log file
+if [ ! -e /var/log/mpi ]; then
+	sudo mkdir /var/log/mpi
+	sudo chown vagrant /var/log/mpi -R
+	touch /var/log/mpi/mpi.log
+fi
+
+# Check pid file
+if [ ! -e /var/run/mpi ]; then 
+	sudo mkdir /var/run/mpi
+	sudo chown vagrant /var/run/mpi -R
+fi
+
+start () {
+	if [ ! -e $PID_FILE ]; then
+		np=`cat ~/.mpi_np`
+		echo 'Starting' >> $LOG_FILE
+		
+		nohup mpirun -np $np /vagrant/mpi $DJANGO_ADRESS $CLUSTER_ID &>> $LOG_FILE &
+		echo $! > $PID_FILE
+	fi
+}
+
+
+stop () {
+	if [ -e $PID_FILE ]; then
+		pid=`cat $PID_FILE`
+		kill -9 $pid
+		killall mpi
+		rm -f $PID_FILE
+	fi
+}
+
+case "$1" in
+	start)
+		start
+		;;
+	stop)
+		stop
+		;;
+	restart)
+		stop
+		start
+		;;
+	*)
+        	echo "Usage: $0 {start|stop|restart}" >&2
+		;;
+esac
+
+exit 0

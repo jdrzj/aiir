@@ -1,33 +1,25 @@
 from aplikacja_kliencka.models import *
 from threading import Thread
 from datetime import datetime
-from django.db.models import F
-import pika
 import json
 
-connection = pika.BlockingConnection(pika.ConnectionParameters(host='node1'))
-channel = connection.channel()
-channel.exchange_declare(exchange='mpi.results', type='direct')
+class GetMessages(Thread):
+  def __init__(self, receiver, cluster_id):
+    Thread.__init__(self)
 
-channel.basic_qos(prefetch_count=1)
-result = channel.queue_declare(exclusive=True)
-queue_name = result.method.queue
-channel.queue_bind(exchange='mpi.results', queue=queue_name, routing_key='mpi.results')
+    self.receiver = receiver
+    self.cluster_id = cluster_id
 
-class GetMessage(Thread):
-	def run(self):
-		def callback(ch, method, properties, body):
-			result = json.loads(body.decode('utf-8'))
-			password = Password.objects.filter(id=result['id'])[0]
-			password.password = result['password']
-			password.end_time = datetime.now()
-			password.save()
+  def run(self):
+    while(True):
+      result = json.loads(self.receiver.recv_string())
+      result['id'] = int(result['id'])
 
-			print('Received')
-			print(result)
-		
-		channel.basic_consume(callback, queue=queue_name, no_ack=True)
-		channel.start_consuming()
+      password = Password.objects.filter(id=result['id'])[0]
+      password.password = result['password']
 
-t = GetMessage()
-t.start()
+      password.start_time = datetime.fromtimestamp(int(result['start_time']))
+      password.end_time = datetime.fromtimestamp(int(result['end_time']))
+      password.save()
+
+      print('%s received %s' % (self.cluster_id, result))

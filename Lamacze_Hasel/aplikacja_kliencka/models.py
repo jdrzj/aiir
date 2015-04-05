@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import json
 
 class Task(models.Model):
 	user = models.ForeignKey(User)
@@ -13,7 +14,7 @@ class Task(models.Model):
 			status = self.status,
 			creation_date = str(self.creation_date),
 			cluster = self.cluster,
-			passwords = [ password.json() for password in self.passwords.all()])
+			passwords = [ password.json(True) for password in self.passwords.all()])
 
 class Password(models.Model):
 	hash = models.CharField(max_length=250)
@@ -23,11 +24,17 @@ class Password(models.Model):
 	end_time = models.DateTimeField(null=True)
 	algorithm = models.CharField(max_length=30)
 
-	def json(self):
-		return dict(
-			id = self.id,
-			hash = self.hash,
-			start_time = str(self.start_time),
-			end_time = str(self.end_time),
-			algorithm = self.algorithm,
-			password = self.password)
+	def json(self, full):
+		if full:
+			return dict(
+				id = self.id,
+				hash = self.hash,
+				start_time = str(self.start_time),
+				end_time = str(self.end_time),
+				algorithm = self.algorithm,
+				password = self.password)
+		else:
+			return json.dumps(dict(
+				id = str(self.id),
+				hash = self.hash,
+				algorithm = self.algorithm))
