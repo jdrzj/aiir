@@ -4,16 +4,20 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.shortcuts import render, render_to_response, RequestContext, HttpResponse, HttpResponseRedirect
-
+from django.http import JsonResponse
+from aplikacja_kliencka.models import *
 import collections
 import json
 import hashlib
+import datetime
 
 from aplikacja_kliencka.forms import *
+
 
 def home(request):
     return render(request, "aplikacja_kliencka/index.html")
 
+@login_required
 def hash_generator(request):
     return render(request, "aplikacja_kliencka/hash_generator.html")
 
@@ -49,7 +53,8 @@ def register(request):
                 error_message['Potwierdzenie Hasła'] = "Hasła nie pasują do siebie, spróbuj ponownie"
             context['error_message'] = error_message
 
-    return render(request, "aplikacja_kliencka/register.html", context )
+    return render(request, "aplikacja_kliencka/register.html", context)
+
 
 @csrf_protect
 def login(request):
@@ -70,16 +75,17 @@ def login(request):
 
     return render(request, "aplikacja_kliencka/login.html", context)
 
+
 @login_required
 def logout(request):
     auth_logout(request)
     return HttpResponseRedirect(reverse('aplikacja_kliencka:home'))
 
+
 @sensitive_post_parameters()
 @csrf_protect
 @login_required
 def password_change(request):
-
     context = {}
     context["form"] = PasswordChangeForm(request.user)
     error_message = collections.OrderedDict()
@@ -112,7 +118,6 @@ def password_change(request):
 
 @csrf_exempt
 def generate_hash(request):
-
     response_data = {}
 
     if request.is_ajax():
@@ -133,12 +138,12 @@ def generate_hash(request):
 
     return HttpResponse(json.dumps(response_data), content_type='application/json')
 
+
 def about_project(request):
     return render(request, "aplikacja_kliencka/about_project.html")
 
 @login_required
 def edit_profile(request):
-
     error_message = collections.OrderedDict()
     current_user = request.user
     message = ""
@@ -161,9 +166,55 @@ def edit_profile(request):
 
     edit_profile_form = EditProfileForm(instance=current_user)
 
-    context = {'edit_profile_form': edit_profile_form,
-               'error_message': error_message}
-    context['fistname'] = request.user.first_name
-    context['lastname'] = request.user.last_name
-    context['email'] = request.user.email
+    context = {'edit_profile_form': edit_profile_form, 'error_message': error_message,
+               'fistname': request.user.first_name, 'lastname': request.user.last_name, 'email': request.user.email}
     return render(request, 'aplikacja_kliencka/edit_profile.html', context)
+
+@login_required
+def task_actual(request):
+    context = {'undefined': 'undefined'}
+    tasks_for_grid = Task.objects.filter(user=request.user).exclude(status=100).order_by('-id').values("id", "status",
+                                                                                "cluster", "creation_date", "end_time")
+    gridData = {'rows': list(tasks_for_grid)}
+    for datetimefield in gridData['rows']:
+        if datetimefield['creation_date'] != None:
+            datetimefield['creation_date'] = datetimefield['creation_date'].strftime("%b %d %Y %H:%M:%S")
+        if datetimefield['end_time'] != None:
+            datetimefield['creation_date'] = datetimefield['creation_date'].strftime("%b %d %Y %H:%M:%S")
+
+    context['gridData'] = json.dumps(gridData)
+
+    return render(request, "aplikacja_kliencka/task_actual.html", context)
+
+@login_required
+def task_history(request):
+    context = {'undefined': 'undefined'}
+    tasks_for_grid = Task.objects.filter(user=request.user, status=100).order_by('-id').values("id", "status", "cluster",
+                                                                                            "creation_date", "end_time")
+    gridData = {'rows': list(tasks_for_grid )}
+    for datetimefield in gridData['rows']:
+        if datetimefield['creation_date'] != None:
+            datetimefield['creation_date'] = datetimefield['creation_date'].strftime("%b %d %Y %H:%M:%S")
+        if datetimefield['end_time'] != None:
+            datetimefield['creation_date'] = datetimefield['creation_date'].strftime("%b %d %Y %H:%M:%S")
+    context['gridData'] = json.dumps(gridData)
+
+    return render(request, "aplikacja_kliencka/task_history.html",context)
+
+@login_required
+def get_passwords(request,id):
+    passwords_for_subgrid = Password.objects.filter(task=Task.objects.get(pk=id)).values("id", 'hash', 'password',
+                                                                                  'start_time', 'end_time', 'algorithm')
+    subgridData = {'rows': list(passwords_for_subgrid)}
+    for datetimefield in subgridData['rows']:
+        if datetimefield['start_time'] != None:
+            datetimefield['start_time'] = datetimefield['start_time'].strftime("%b %d %Y %H:%M:%S")
+        if datetimefield['end_time'] != None:
+            datetimefield['end_time'] = datetimefield['end_time'].strftime("%b %d %Y %H:%M:%S")
+
+    return JsonResponse(subgridData)
+
+@login_required
+def task_details(request, id):
+    context = {'id' : id}
+    return render(request, "aplikacja_kliencka/task_details.html", context)

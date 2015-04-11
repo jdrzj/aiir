@@ -4,9 +4,16 @@
     {% load staticfiles %}
     <link rel="stylesheet" href="/static/css/bootstrap.css"/>
     <link rel="stylesheet" href="/static/css/bootstrap-theme.css"/>
+    <link rel="stylesheet" href="/static/css/jquery-ui.css"/>
+    <link rel="stylesheet" href="/static/css/jquery-ui.theme.css"/>
+    <link rel="stylesheet" href="/static/css/jquery-ui.structure.css"/>
+    <link rel="stylesheet" href="/static/jqGRID/css/ui.jqgrid.css"/>
     <script src="/static/js/jquery-2.1.3.js" type="text/javascript"></script>
     <script src="/static/js/bootstrap.js" type="text/javascript"></script>
-
+    <script src="/static/jqGRID/js/i18n/grid.locale-pl.js" type="text/javascript"></script>
+    <script src="/static/jqGRID/js/jquery-1.11.0.min.js" type="text/javascript"></script>
+    <script src="/static/jqGRID/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+    <script src="/static/js/jquery-ui.min.js" type="text/javascript"></script>
     <meta charset="UTF-8">
     <title>{% block title %}Łamacze Haseł{% endblock %}</title>
 </head>
@@ -35,6 +42,13 @@
                 {% if user.is_superuser %}
                     <li class=><a href="/admin">Admin</a></li>
                 {% endif %}
+                <li class="dropdown" >
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Moje zadania<span class="caret"></span></a>
+              <ul class="dropdown-menu" role="menu">
+                <li><a href="{% url 'aplikacja_kliencka:task_actual' %}">Aktualne zadania</a></li>
+                <li><a href="{% url 'aplikacja_kliencka:task_history' %}">Historia zadań</a></li>
+              </ul>
+            </li>
                 <li><a href={% url 'aplikacja_kliencka:hash_generator' %}>Hash Generator</a></li>
             {% endif %}
           </ul>
