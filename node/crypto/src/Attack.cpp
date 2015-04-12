@@ -4,16 +4,25 @@
 #include "boost/dynamic_bitset.hpp"
 #include "CryptoUtils.h"
 #include "Attack.h"
+#include "RainbowCracker.h"
 
-Attack::Attack(const AttackType& t, const std::string& k):type(t),key(k){};
-Attack::~Attack(){};
+Attack::Attack(const AttackType& t, const std::string& k, HashingFunction
+    f)
+    : type(t)
+    , key(k)
+    , function(f) {}
+
+Attack::~Attack() {}
 
 void Attack::defeatKey()
 {
-    std::cout << this->key << std::endl;
     if(this->type == AttackType::dictionary)
     {
         dictionaryAttack(dictionary_file_name);
+    }
+    else if(this->type == AttackType::rainbow)
+    {
+        rainbowAttack();
     }
 };
 
@@ -46,6 +55,20 @@ void Attack::dictionaryAttack(std::string& file_name)
         std::cout << "no such file " << file_name << std::endl;
     }
 };
+
+void Attack::rainbowAttack()
+{
+    std::cout << "defeat key: " << this->key << std::endl;
+    Hash desired_hash = CryptoUtils::convertHexRepToHash(key, function);
+    RainbowCracker rainbow;
+    rainbow.generateChains(2, function);
+    std::string pass = rainbow.run(desired_hash, function);
+    if (pass != "")
+    {
+        std::cout << "JACKPOT!" << std::endl;
+        std::cout << this->key << " is " << "sha1(" << pass << ")"<< std::endl;
+    }
+}
 
 void Attack::hackify(std::string pass)
 {
