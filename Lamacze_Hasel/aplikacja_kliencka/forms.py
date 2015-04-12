@@ -100,19 +100,3 @@ class EditProfileForm(forms.ModelForm):
         model = User
         fields = ('email', 'first_name', 'last_name')
 
-class PasswordAddForm(forms.ModelForm):
-
-    password = forms.CharField(help_text="Hasło:", required=True)
-    hash = forms.CharField(help_text="Hash:", required=True)
-    algorithm = forms.CharField(help_text="Algorytm", required=True)
-
-    class Meta:
-        model = Password
-        fields = ('password', 'hash', 'algorithm')
-
-class TaskAddForm(forms.ModelForm):
-    cluster = forms.IntegerField(help_text="Klaster", required=True)
-
-    class Meta:
-        model = Task
-        fields = ('cluster',)

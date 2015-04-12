@@ -76,10 +76,9 @@
                         dataType: "json",
                         type: "POST",
                         data: JSON.stringify({'hashes':[{'hash': hash, 'algorithm': algorithm}], 'cluster': cluster}),
-                        success:
-                                redirect
-
-
+                        success: function() {
+                            window.location='/task_actual/'
+                        }
                    })});
 
     </script>

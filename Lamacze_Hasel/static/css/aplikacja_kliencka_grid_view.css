@@ -1,0 +1,25 @@
+body {
+  background: url(images/Coastal-rocks.jpg) no-repeat center center fixed;
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover; }
+
+.aplikacja_kliencka_wrapper {
+    margin: 7%;
+}
+.aplikacja_kliencka_grid_wrapper {
+   margin-left: 50px;
+   margin-right: 50px;
+   margin-top: auto;
+}
+.ui-jqgrid .ui-jqgrid-htable th div
+{
+    height: auto;
+    overflow: hidden;
+    padding-right: 4px;
+    padding-top: 2px;
+    position: relative;
+    vertical-align: text-top;
+    white-space: normal !important;
+}

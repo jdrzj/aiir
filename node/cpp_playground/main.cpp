@@ -13,63 +13,74 @@
 #include <iomanip>
 #include <typeinfo>
 #include <openssl/sha.h>
+#include <bitset>
+#include <cmath>
+#include "boost/dynamic_bitset.hpp"
 
-std::string sha(unsigned char * phrase, int length) {
+const int max_level = 3;
+const std::string suffixes = "1234567890!@#$^&*()_+{}";
 
-    unsigned char hash[SHA_DIGEST_LENGTH];
-    SHA1(phrase, length, hash);
-    std::stringstream stream;
-    for(int i = 0; i < SHA_DIGEST_LENGTH; i++){
-        stream << std::setw(2) << std::setfill('0') << std::hex << (int)hash[i];
+
+void check_suffixes(std::string pass, int level = 0){
+
+    if(level != max_level)
+    {
+        std::string pass2 = pass;
+        for(int i = 0; i < suffixes.length(); i++)
+        {
+            pass2 = pass;
+            pass2 += suffixes[i];
+            std::cout << pass2 << std::endl;
+
+            check_suffixes(pass2, level+1);
+        }
     }
 
-    return stream.str();
 }
 
+void hackify(std::string pass)
+{
+    //liczba zapisana bitowo
+    // 0 - downcase
+    // 1 - uppercase
+
+    std::string s;
+    std::string pass2;
+    int x = pass.length();
+    for(int i = 0; i < pow(2, pass.length()); i++)
+    {
+        pass2 = pass;
+        const boost::dynamic_bitset<> b2(x, i);
+        boost::to_string(b2, s);
+        //std::cout << s << std::endl;
+        for(int j = 0; j < s.length(); j++)
+        {
+            //std::cout << s[j] << std::endl;
+            if(s[j] == '1')
+            {
+                pass2[j] = toupper(pass[j]);
+            }
+            else if (s[j] == '0')
+            {
+                pass2[j] = tolower(pass[j]);
+            }
+        }
+        check_suffixes(pass2);
+        //std::cout << pass2 << std::endl;
+    }
+
+}
 
 
 int main(int argc, const char * argv[]) {
 
+    std::string password = "password";
+    //std::cout << "Password to hack: " << password << std::endl;
+    hackify(password);
+    //password[0] = toupper (password[0]);
+    //std::cout << password << std::endl;
 
-
-    if (argc == 1){
-        std::cout << "No password given" << std::endl;
-        return 0;
-    }
-
-    const char * dictionary_file = argv[2];
-    std::string password = argv[1];
-
-    std::cout << "Password to hack: " << password << std::endl;
-    std::cout << "Dictionary: " << dictionary_file << std::endl;
-
-    std::fstream dictionary;
-    dictionary.open(dictionary_file, std::ios::in);
-    std::string line;
-
-    if (dictionary.good()) {
-        unsigned char *temp_uc;
-        std::cout << "Starting hackin..." << std::endl;
-        while (std::getline(dictionary, line)){
-
-            //std::cout << line << std::endl;
-            int len = line.length();
-            temp_uc = new unsigned char[len];
-            strcpy( (char*) temp_uc, line.c_str() );
-            //std::cout << "długość - " << len << "  line - " << line << "  temp_uc - " << temp_uc << std::endl;
-
-            if(sha(temp_uc, len) == password){
-                std::cout << "JACKPOT!" << std::endl;
-                std::cout << line << std::endl;
-                std::cout << password << std::endl;
-                return 0;
-            }
-        }
-        std::cout << "no match" << std::endl;
-    } else {
-        std::cout << "ERR with file" << std::endl;
-    }
-
+    //check_suffixes("a");
 
     return 0;
 }
