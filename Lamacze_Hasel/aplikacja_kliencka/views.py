@@ -1,13 +1,16 @@
 from django.contrib.auth import authenticate, update_session_auth_hash, login as auth_login, logout as auth_logout
+
 from django.core.urlresolvers import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.debug import sensitive_post_parameters
 from django.views.decorators.csrf import csrf_protect, csrf_exempt
 from django.shortcuts import render, render_to_response, RequestContext, HttpResponse, HttpResponseRedirect
-
+from django.template import loader, RequestContext
+from aplikacja_kliencka import mpi
 import collections
 import json
 import hashlib
+import aplikacja_kliencka
 
 from aplikacja_kliencka.forms import *
 
@@ -49,7 +52,7 @@ def register(request):
                 error_message['Potwierdzenie Hasła'] = "Hasła nie pasują do siebie, spróbuj ponownie"
             context['error_message'] = error_message
 
-    return render(request, "aplikacja_kliencka/register.html", context )
+    return render(request, "aplikacja_kliencka/register.html", context)
 
 @csrf_protect
 def login(request):
@@ -123,7 +126,7 @@ def generate_hash(request):
             response_data['result'] = "We're sorry, but something went wrong."
         else:
             response_data['status'] = "success"
-            response_data['result'] = "Your has is generated"
+            response_data['result'] = "Your hash is generated"
             response_data['text_length'] = len(requested_text_to_hash)
             response_data['sha1'] = str(hashlib.sha1((requested_text_to_hash).encode("utf8")).hexdigest())
             response_data['md5'] = str(hashlib.md5(requested_text_to_hash.encode("utf8")).hexdigest())
@@ -167,3 +170,39 @@ def edit_profile(request):
     context['lastname'] = request.user.last_name
     context['email'] = request.user.email
     return render(request, 'aplikacja_kliencka/edit_profile.html', context)
+
+@login_required
+def add_task(request):
+    error_message = collections.OrderedDict()
+    context = {}
+
+    if request.method == 'POST':
+
+        task_add_form = TaskAddForm(data=request.POST)
+        password_add_form = PasswordAddForm(data=request.POST)
+
+        if password_add_form.is_valid() and task_add_form.is_valid():
+            task = task_add_form.save(commit=False)
+            task.user = request.user
+            task.status = 0
+            password = password_add_form.save(commit=False)
+            task.save()
+            password.task = task
+            password.save()
+
+            data = {'hashes': [{'hash': password.hash}, {'algorithm':password.algorithm}], 'cluster': task.cluster}
+            #return HttpResponseRedirect(mpi.send)
+            return HttpResponse(json.dumps(data))
+
+        #else:
+            #error handling
+
+    return render(request, "aplikacja_kliencka/add_task.html", context)
+
+@csrf_exempt
+def test(request):
+    print (request.method)
+    print(request.body)
+    jsonData = json.loads(request.body.decode('utf-8'))
+    print(jsonData)
+    return HttpResponse("OK")

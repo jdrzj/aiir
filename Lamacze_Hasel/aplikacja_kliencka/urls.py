@@ -19,5 +19,7 @@ urlpatterns = patterns('',
     url(r'^generate_hash/$', views.generate_hash, name='generate_hash'),
     url(r'^about_project/$', views.about_project, name='about_project'),
     url(r'^edit_profile/$', views.edit_profile, name='edit_profile'),
-    url(r'^mpi_send$', mpi.send, name='mpi_send')
+    url(r'^mpi_send/$', mpi.send, name='mpi_send'),
+    url(r'^add_task/$', views.add_task, name='add_task'),
+    url(r'^test/$', views.test, name='test'),
 )

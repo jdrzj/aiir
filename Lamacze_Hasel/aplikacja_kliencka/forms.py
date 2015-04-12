@@ -1,5 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
+from aplikacja_kliencka.models import Password, Task
 from django.utils.translation import gettext as _
 from collections import OrderedDict
 from django.core.exceptions import ValidationError
@@ -98,3 +99,20 @@ class EditProfileForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', 'first_name', 'last_name')
+
+class PasswordAddForm(forms.ModelForm):
+
+    password = forms.CharField(help_text="Hasło:", required=True)
+    hash = forms.CharField(help_text="Hash:", required=True)
+    algorithm = forms.CharField(help_text="Algorytm", required=True)
+
+    class Meta:
+        model = Password
+        fields = ('password', 'hash', 'algorithm')
+
+class TaskAddForm(forms.ModelForm):
+    cluster = forms.IntegerField(help_text="Klaster", required=True)
+
+    class Meta:
+        model = Task
+        fields = ('cluster',)
