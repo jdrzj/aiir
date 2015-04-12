@@ -33,14 +33,14 @@ std::string RainbowCracker::run(Hash& desired_hash, HashingFunction function)
 	return pass;
 }
 
-void RainbowCracker::generateChains(int pass_length, HashingFunction function)
+void RainbowCracker::generateChains(int start, int end, int pass_length,
+	HashingFunction function)
 {
-	chains.push_back(generateVerySimpleChain("00", 100, 2, HashingFunction::SHA1));
-	chains.push_back(generateVerySimpleChain("01", 100, 2, HashingFunction::SHA1));
-	chains.push_back(generateVerySimpleChain("02", 100, 2, HashingFunction::SHA1));
-	chains.push_back(generateVerySimpleChain("03", 100, 2, HashingFunction::SHA1));
-	chains.push_back(generateVerySimpleChain("04", 100, 2, HashingFunction::SHA1));
-	chains.push_back(generateVerySimpleChain("04", 100, 2, HashingFunction::SHA1));
+	for (int i = start; i <= end; ++i)
+	{
+		chains.push_back(generateVerySimpleChain(std::to_string(i), 100, 2,
+			HashingFunction::SHA1));
+	}
 }
 
 Chain RainbowCracker::generateVerySimpleChain(const std::string initial_text, int iterations,
@@ -70,7 +70,7 @@ std::string RainbowCracker::checkChain(const Chain& chain, Hash& desired_hash, H
 		for (int i(0); i < chain.iterations_; ++i)
 		{
 			Hash hash = CryptoUtils::generateSHA1(text);
-			std::string x = CryptoUtils::convertHashToHexRep(hash);
+			std::cout << CryptoUtils::convertHashToHexRep(hash) << std::endl;
 			if (CryptoUtils::areHashesEqual(hash, desired_hash))
 				return text;
 			text = reduce(hash, 0, 0, chain.password_length_);

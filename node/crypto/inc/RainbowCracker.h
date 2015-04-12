@@ -45,7 +45,7 @@ public:
 	// Sprawdza, czy w danym łańcuchu znalazł się szukany hash
 	std::string checkChain(const Chain& chain, Hash& desired_hash,
 		HashingFunction function);
-	void generateChains(int pass_length, HashingFunction
+	void generateChains(int start, int end, int pass_length, HashingFunction
 		function);
 	std::string run(Hash& desired_hash, HashingFunction
 		function);

@@ -61,7 +61,7 @@ void Attack::rainbowAttack()
     std::cout << "defeat key: " << this->key << std::endl;
     Hash desired_hash = CryptoUtils::convertHexRepToHash(key, function);
     RainbowCracker rainbow;
-    rainbow.generateChains(2, function);
+    rainbow.generateChains(chains_range_start, chains_range_end, 2, function);
     std::string pass = rainbow.run(desired_hash, function);
     if (pass != "")
     {
@@ -123,4 +123,10 @@ void Attack::check_suffixes(std::string pass, int level = 0)
             check_suffixes(pass2, level+1);
         }
     }
+}
+
+void Attack::setChainsRange(int start, int end)
+{
+    chains_range_start = start;
+    chains_range_end = end;
 }

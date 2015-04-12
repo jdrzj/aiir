@@ -10,6 +10,7 @@ int main(int argc, const char * argv[]) {
     dict->defeatKey();
 
     Attack *rainbow = new Attack(AttackType::rainbow, "761f22b2c1593d0bb87e0b606f990ba4974706de", HashingFunction::SHA1);
+    rainbow->setChainsRange(0, 5);
     rainbow->defeatKey();
 
     return 0;
