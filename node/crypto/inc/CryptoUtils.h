@@ -75,6 +75,7 @@ class CryptoUtils
 public:
 	static Hash generateSHA1(const std::string& text);
 	static std::string convertHashToHexRep(Hash& hash);
+	static Hash convertHexRepToHash(const std::string& hex_hash, HashingFunction function);
 	static bool areHashesEqual(Hash& first, Hash& second);
 };
 
