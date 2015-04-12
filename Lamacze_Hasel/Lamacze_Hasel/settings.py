@@ -16,6 +16,9 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
+MY_SOCKET_ADDRESS = 'tcp://192.168.70.200:5557'
+CLUSTERS = [{'id':'1', 'address': 'node1', 'username': 'vagrant', 'password': 'vagrant', 'socket_address':'tcp://node1:5558'}]
+
 
 # Application definition
 
@@ -65,7 +68,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

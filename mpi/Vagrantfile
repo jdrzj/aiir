@@ -57,36 +57,35 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       apt-get -y install openmpi-bin openmpi-common openssh-client openssh-server libopenmpi-dev libopenmpi1.6-dbg libopenmpi1.6 build-essential htop
       touch /etc/.provisioned
     fi
-    if [ `hostname` = "node1" ]; then
-      if [[ ! -e /etc/.provisioned1 ]]; then
-        apt-get install libboost-all-dev cmake git rabbitmq-server libssl-dev -y
+
+    if [ `hostname` = "node1" ]; then 
+      apt-get install libboost-all-dev -y
+    fi
+   
+    if [[ ! -e /etc/.provisioned3 ]]; then
+        apt-get install libtool pkg-config build-essential autoconf automake cmake libssl-dev -y
         mkdir ~/tmp && cd ~/tmp
-        wget https://github.com/alanxz/rabbitmq-c/archive/v0.6.0.tar.gz -O ~/tmp/v0.6.0.tar.gz
-        gunzip v0.6.0.tar.gz
-        tar -xvf v0.6.0.tar
-        cd rabbitmq-c-0.6.0
-        mkdir build && cd build
-        cmake ..
-        cmake --build . --target install 
-        cd ~/tmp
-        git clone https://github.com/alanxz/SimpleAmqpClient
-        cd SimpleAmqpClient
-        mkdir build && cd build
-        cmake ..
+        wget http://download.zeromq.org/zeromq-4.1.0-rc1.tar.gz
+        gunzip zeromq-4.1.0-rc1.tar.gz
+        tar -xvf zeromq-4.1.0-rc1.tar
+        cd zeromq-4.1.0
+        ./configure
         make
         make install
-        echo "127.0.0.1 localhost" >> /etc/hosts      
-        
-        rm -rf ~/tmp
-        touch /etc/.provisioned1
+        cd ..
+        rm -rf zeromq-4.1.0
+        ln -sf /usr/local/lib/libzmq.so.4 /usr/lib/libzmq.so.4 
+        cd /usr/local/include
+        wget https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp
+        echo "127.0.0.1 localhost" >> /etc/hosts 
+
+        echo "4" >> /home/vagrant/.mpi_np
+        cp /vagrant/mpi_run_script /etc/init.d/mpi
+        chmod +x /etc/init.d/mpi
+        chown vagrant /etc/init.d/mpi
+
+        touch /etc/.provisioned3
       fi
-      if [[ ! -e /etc/.provisioned2 ]]; then
-        ln -s /usr/local/lib/libSimpleAmqpClient.so.2 /usr/lib/libSimpleAmqpClient.so.2
-        ln -s /usr/local/lib/x86_64-linux-gnu/librabbitmq.so.4 /usr/lib/librabbitmq.so.4
-        
-        touch /etc/.provisioned1
-      fi
-    fi
   SCRIPT
   script.sub! 'N_VMS', N_VMS.to_s
   script.sub! 'N_VMS', N_VMS.to_s
