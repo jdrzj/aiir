@@ -220,7 +220,11 @@ def task_history(request):
 @login_required
 def get_passwords(request,id):
     passwords_for_subgrid = Password.objects.filter(task=Task.objects.get(pk=id)).values("id", 'hash', 'password',
-                                                                                  'start_time', 'end_time', 'algorithm')
+                                                                                  'start_time', 'end_time', 'algorithm',
+                                                                                  'password_cracking_algorithm')
+    for password in passwords_for_subgrid:
+        password['password_cracking_algorithm'] = Password.objects.get(pk=password['id']).get_password_cracking_algorithm_display()
+
     subgridData = {'rows': list(passwords_for_subgrid)}
     for datetimefield in subgridData['rows']:
         if datetimefield['start_time'] != None:

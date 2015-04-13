@@ -11,9 +11,10 @@ class TaskAdmin(admin.ModelAdmin):
 class PasswordAdmin(admin.ModelAdmin):
 
     fieldsets = [
-        (None, {'fields': ['hash', 'password', 'task', 'start_time', 'end_time', 'algorithm']}),
+        (None, {'fields': ['hash', 'password', 'task', 'start_time', 'end_time', 'algorithm',
+                           'password_cracking_algorithm']}),
         ]
-    list_display = ('hash', 'password', 'start_time', 'task', 'end_time', 'algorithm')
+    list_display = ('hash', 'password', 'start_time', 'task', 'end_time', 'algorithm', 'password_cracking_algorithm')
 
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Password,PasswordAdmin)

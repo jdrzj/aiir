@@ -58,10 +58,11 @@ function grid() {
 			jQuery("#"+subgrid_table_id).jqGrid({
 				url:"/get_passwords/" + rowData['id'],
 				datatype: "json",
-				colNames: ["Id", "Algorytm", "Hash", "Hasło", "Data Rozpoczęcia", "Data Zakończenia"],
+				colNames: ["Id", "Algorytm", "Metoda Rozwiązania", "Hash", "Hasło", "Data Rozpoczęcia", "Data Zakończenia"],
 				colModel: [
 					{ name: "id", width: 55, sorttype: "int", key: true, align: "center", resizable: true, sortable: true, search:false},
 					{ name: "algorithm", width: 110 , sorttype: "text", align: "center",  resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
+                    { name: "password_cracking_algorithm", width: 110 , sorttype: "text", align: "center",  resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
 					{ name: "hash", width: 400, align: "right", align: "center", resizable: true, sortable: true, searchoptions: { sopt: ['cn','nc','eq']} },
 					{ name: "password", width: 200, align: "right", align: "center", resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
 					{ name: "start_time", width: 150, align: "right", align: "center", resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq'] }},

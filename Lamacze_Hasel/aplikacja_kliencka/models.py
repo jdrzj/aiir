@@ -21,12 +21,19 @@ class Task(models.Model):
 			passwords = [ password.json(True) for password in self.passwords.all()])
 
 class Password(models.Model):
+
+	CRACKING_ALGORITHMS = (
+    	('MS', 'Metoda Słownikowa'),
+    	('TT', 'Tablice Tęczowe'),
+    	('BF', 'Brute Force'),
+	)
 	hash = models.CharField(max_length=250)
 	password = models.CharField(max_length=250)
 	task = models.ForeignKey(Task, related_name='passwords')
 	start_time = models.DateTimeField(null=True)
 	end_time = models.DateTimeField(null=True)
 	algorithm = models.CharField(max_length=30)
+	password_cracking_algorithm = models.CharField(max_length=2, choices=CRACKING_ALGORITHMS)
 
 	def json(self, full):
 		if full:
