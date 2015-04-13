@@ -24,6 +24,4 @@ urlpatterns = patterns('',
     url(r'^get_passwords/(?P<id>\w+)/$', views.get_passwords, name='get_passwords'),
     url(r'^task_history/$', views.task_history, name='task_history'),
     url(r'^task_details/(?P<id>\w+)/$', views.task_details, name='task_details'),
-
-
 )
