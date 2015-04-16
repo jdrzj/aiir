@@ -33,7 +33,6 @@ void Attack::setDictionaryFileName(const std::string& file_name)
 
 void Attack::dictionaryAttack(std::string& file_name)
 {
-    //a tutaj dzieci, dzieje się magia!
     std::fstream dictionary;
     dictionary.open(file_name, std::ios::in);
     std::string line;
@@ -43,7 +42,6 @@ void Attack::dictionaryAttack(std::string& file_name)
     if(dictionary.good())
     {
         std::cout << "GO" << std::endl;
-        unsigned char * temp_uc;
         while (std::getline(dictionary, line))
         {
             hackify(line);
@@ -109,12 +107,11 @@ void Attack::check_suffixes(std::string pass, int level = 0)
         {
             Hash h = CryptoUtils::generateSHA1(pass2);
             //TODO: here should be method areHashesEqual
-            std::cout << pass2 << " = " << CryptoUtils::convertHashToHexRep(h) << std::endl;
             if(CryptoUtils::convertHashToHexRep(h) == this->key)
             {
                 std::cout << "JACKPOT!" << std::endl;
                 std::cout << this->key << " is " << "sha1(" << pass2 << ")"<< std::endl;
-                return;
+                exit(0);
             }
 
             pass2 = pass;
