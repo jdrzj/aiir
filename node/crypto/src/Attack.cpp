@@ -6,8 +6,7 @@
 #include "Attack.h"
 #include "RainbowCracker.h"
 
-Attack::Attack(const AttackType& t, const std::string& k, HashingFunction
-    f)
+Attack::Attack(const AttackType& t, const std::string& k, HashingFunction f)
     : type(t)
     , key(k)
     , function(f) {}
@@ -44,6 +43,7 @@ void Attack::dictionaryAttack(std::string& file_name)
         std::cout << "GO" << std::endl;
         while (std::getline(dictionary, line))
         {
+            std::cout << "hackifyin " << line << std::endl;
             hackify(line);
         }
         std::cout << "no match" << std::endl;
@@ -107,6 +107,7 @@ void Attack::check_suffixes(std::string pass, int level = 0)
         {
             Hash h = CryptoUtils::generateSHA1(pass2);
             //TODO: here should be method areHashesEqual
+
             if(CryptoUtils::convertHashToHexRep(h) == this->key)
             {
                 std::cout << "JACKPOT!" << std::endl;
