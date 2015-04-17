@@ -5,6 +5,7 @@
 #include "CryptoUtils.h"
 #include "Attack.h"
 #include "RainbowCracker.h"
+#include <cstring>
 
 Attack::Attack(const AttackType& t, const std::string& k, HashingFunction
     f)
@@ -23,7 +24,11 @@ void Attack::defeatKey()
     else if(this->type == AttackType::rainbow)
     {
         rainbowAttack();
-    }
+    } 
+    else if(this->type == AttackType::bruteForce)
+	{
+		bruteForceAttack();
+	}
 };
 
 void Attack::setDictionaryFileName(const std::string& file_name)
@@ -68,6 +73,27 @@ void Attack::rainbowAttack()
         std::cout << "JACKPOT!" << std::endl;
         std::cout << this->key << " is " << "sha1(" << pass << ")"<< std::endl;
     }
+}
+
+void Attack::bruteForceAttack()
+{
+	Hash desiredHash = CryptoUtils::convertHexRepToHash(key, function);
+	std::string pass = " ";
+	int stringPosition = 0;
+	while(true)
+	{
+		Hash passHash = CryptoUtils::generateSHA1(pass);
+		if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
+		{
+			std::cout << "success!" << std::endl;
+			std::cout << this->key << " is " << "sha1(" << pass << ")"<< std::endl;
+			break;
+		}
+		else
+		{
+			CryptoUtils::incrementString(pass, stringPosition);
+		}
+	}
 }
 
 void Attack::hackify(std::string pass)

@@ -13,5 +13,8 @@ int main(int argc, const char * argv[]) {
     rainbow->setChainsRange(0, 5);
     rainbow->defeatKey();
 
+
+    Attack *bruteForce = new Attack(AttackType::bruteForce, "761f22b2c1593d0bb87e0b606f990ba4974706de", HashingFunction::SHA1);
+	bruteForce->defeatKey();
     return 0;
 }

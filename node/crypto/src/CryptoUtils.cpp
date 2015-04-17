@@ -60,3 +60,16 @@ bool CryptoUtils::areHashesEqual(Hash& first, Hash& second)
 	return std::equal(first.getByteArray(), first.getByteArray() + first.getSize(),
 		second.getByteArray());
 }
+
+// Inkrementuje ciag znakow.
+void CryptoUtils::incrementString(std::string &s, int stringPosition) {
+    if(s.size() <= stringPosition) {
+        s.append(" ");
+    } else {
+        s[stringPosition] = s[stringPosition] + 1;
+        if(s[stringPosition] > 126) {
+            s[stringPosition] = ' ';
+            incrementString(s, stringPosition+1);
+        }
+    }
+}

@@ -1,5 +1,5 @@
 
-enum class AttackType { dictionary, rainbow, /*brute force*/};
+enum class AttackType { dictionary, rainbow, bruteForce};
 
 class Attack {
     AttackType type;
@@ -22,4 +22,5 @@ private:
     void dictionaryAttack(std::string& file_name);
     void rainbowAttack();
     void hackify(std::string pass);
+    void bruteForceAttack();
 };

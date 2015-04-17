@@ -77,6 +77,7 @@ public:
 	static std::string convertHashToHexRep(Hash& hash);
 	static Hash convertHexRepToHash(const std::string& hex_hash, HashingFunction function);
 	static bool areHashesEqual(Hash& first, Hash& second);
+	static void incrementString(std::string &s, int stringPosition);
 };
 
 #endif // CRYPTO_CRYPTO_UTILS_H
