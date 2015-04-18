@@ -23,7 +23,7 @@ void Attack::defeatKey()
     else if(this->type == AttackType::rainbow)
     {
         rainbowAttack();
-    } 
+    }
     else if(this->type == AttackType::bruteForce)
 	{
 		bruteForceAttack();
@@ -80,8 +80,9 @@ void Attack::bruteForceAttack()
 	int stringPosition = 0;
 	while(true)
 	{
+    std::cout << pass << std::endl;
 		Hash passHash = CryptoUtils::generateSHA1(pass);
-		if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
+		if(CryptoUtils::convertHashToHexRep(passHash) == this->key)
 		{
 			std::cout << "success!" << std::endl;
 			std::cout << this->key << " is " << "sha1(" << pass << ")"<< std::endl;
@@ -119,11 +120,11 @@ void Attack::hackify(std::string pass)
                 pass2[j] = tolower(pass[j]);
             }
         }
-        check_suffixes(pass2, 0);
+        checkSuffixes(pass2, 0);
     }
 }
 
-void Attack::check_suffixes(std::string pass, int level = 0)
+void Attack::checkSuffixes(std::string pass, int level = 0)
 {
     const int max_level = 3;
     if(level != max_level)
@@ -144,7 +145,7 @@ void Attack::check_suffixes(std::string pass, int level = 0)
             pass2 = pass;
             pass2 += suffixes[i];
 
-            check_suffixes(pass2, level+1);
+            checkSuffixes(pass2, level+1);
         }
     }
 }

@@ -33,9 +33,9 @@ int main(int argc, char** argv) {
     number = -1;
     MPI_Send(&number, 1, MPI_INT, 1, 0, MPI_COMM_WORLD);
   } else if (world_rank == 1) {
-    printf("I'm the slave\n");
-    MPI_Recv(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-    printf("Process 1 received number %d from process 0\n", number);
+       MPI_Recv(&number, 1, MPI_INT, 0, 0, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+       printf("I'm the slave no %d\n", number);
+       printf("Process 1 received number %d from process 0\n", number);
   }
   MPI_Finalize();
 }

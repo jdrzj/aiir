@@ -16,7 +16,7 @@ public:
     ~Attack();
     void setDictionaryFileName(const std::string& file_name);
     void defeatKey();
-    void check_suffixes(std::string pass, int level);
+    void checkSuffixes(std::string pass, int level);
     void setChainsRange(int start, int end);
 private:
     void dictionaryAttack(std::string& file_name);
