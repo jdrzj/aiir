@@ -27,15 +27,11 @@
                              {% endfor %}
                         {% endif %}
 
-                        <div class="form-group input-group">
-                            <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
-                            <input type="text" name="password" class="form-control" placeholder="Hasło" id="id_password"
-                                   maxlength="30" name="password" type="text" required/>
                         </div>
                         <div class="form-group input-group">
                             <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
                             <input type="text" name="hash" class="form-control" placeholder="Hash" id="id_hash"
-                                   maxlength="30" name="hash" type="text" required/>
+                                   minlength="32" maxlength="40" name="hash" type="text" required/>
                         </div>
                         <div class="form-group">
                             <label for="id_algorithm">Algorytm:</label>
@@ -64,11 +60,12 @@
     </div>
     <script>
     $(document).on("click", ".dodaj", function(e) {
-        var password = $('input[name=password]').val()
         var hash = $('input[name=hash]').val();
         var algorithm = $('select[name=algorithm]').val()
         var cluster = $('input[name=cluster]').val()
         var url = "/mpi_send/";
+
+        if ((hash.length == 32 && algorithm == "md5") || (hash.length == 40 && algorithm == "sha1")) {
 
                     e.preventDefault();
                     $.ajax({
@@ -79,7 +76,13 @@
                         success: function() {
                             window.location='/task_actual/'
                         }
-                   })});
+                   })}
+
+        else {
+                window.location = '/add_task/'
+                window.alert("Nieprawidłowy hash!");
+             }
+    });
 
     </script>
 {% endblock %}
