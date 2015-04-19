@@ -1,6 +1,6 @@
 #include "zhelpers.hpp"
 #include "task.hpp"
-
+#include "Attack.h"
 #include <mpi.h>
 
 void master(char* django, char* clusterId, int world_size);
@@ -13,6 +13,7 @@ std::string revcString(int source, int tag);
 // argv[2] = cluster id
 int main (int argc, char *argv[])
 {
+
     MPI_Init (&argc, &argv);
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
@@ -120,18 +121,21 @@ void syncTransmiter(zmq::socket_t* transmiter)
 
 void slave(int world_rank)
 {
+
+
     while (true) {
         std::string hash = revcString(0, 0);
+        Attack *dict = new Attack(AttackType::dictionary, hash, HashingFunction::SHA1);
+        
+        dict->setDictionaryFileName("/vagrant/john.txt");
 
-        // Working hard...
-        sleep(3);
+        int world_size;
+        MPI_Comm_size(MPI_COMM_WORLD, &world_size);
+        dict->defeatKey(world_rank, world_size);
 
         std::string password;
-        if ((rand() % 2) == 0 ) {
-            password = "N/A";
-        } else {
-            password = "broke by " + std::to_string(world_rank);
-        }
+
+        password = hash;
         MPI_Send((void*)password.c_str(), password.size(), MPI_CHAR, 0, 0, MPI_COMM_WORLD);
     }
 }
