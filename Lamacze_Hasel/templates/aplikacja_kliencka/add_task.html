@@ -6,9 +6,9 @@
 {% block body_block %}
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/css/register.css"/>
+    <link rel="stylesheet" href="/static/css/add_task.css"/>
 
-    <div class="container register_container">
+    <div class="container add_task_container">
         <div class="row pad-top">
             <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
                 <div class="panel panel-default">
@@ -50,6 +50,7 @@
                         <button type="submit" class="btn btn-success btn-sm dodaj">Dodaj</button>
 
                         <hr />Skorzystaj z generatora hashy!  <a href={% url "aplikacja_kliencka:hash_generator" %} >Hash Generator</a>
+                        <hr />Chcesz dodać więcej niż jeden hash?  <a href={% url "aplikacja_kliencka:add_tasks_from_file" %} >Dodaj z pliku</a>
                     </form>
                 </div>
             </div>

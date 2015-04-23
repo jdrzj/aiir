@@ -187,6 +187,10 @@ def add_task(request):
     return render(request, "aplikacja_kliencka/add_task.html")
 
 @login_required
+def add_tasks_from_file(request):
+    return render(request, "aplikacja_kliencka/add_tasks_from_file.html")
+
+@login_required
 def task_actual(request):
     context = {'undefined': 'undefined'}
     tasks_for_grid = Task.objects.filter(user=request.user).exclude(status=100).order_by('-id').values("id", "status",
