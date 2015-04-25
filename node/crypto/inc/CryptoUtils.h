@@ -26,6 +26,9 @@ class Hash
 
 public:
 
+	// Używać z rozwagą.
+	Hash()
+	: size_(0) {}
 	// Konstruktor
 	Hash(HashingFunction function)
 	: function_(function)

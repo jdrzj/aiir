@@ -71,7 +71,7 @@ void Attack::rainbowAttack()
     if (pass != "")
     {
         std::cout << "JACKPOT!" << std::endl;
-        std::cout << this->key << " is " << "sha1(" << pass << ")"<< std::endl;
+        std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
     }
 }
 
@@ -82,11 +82,21 @@ void Attack::bruteForceAttack()
 	int stringPosition = 0;
 	while(true)
 	{
-		Hash passHash = CryptoUtils::generateSHA1(pass);
+        Hash passHash;
+        if (function == HashingFunction::SHA1)
+        {
+            Hash tmp = CryptoUtils::generateSHA1(pass);
+            passHash = tmp;
+        }
+        else if (function == HashingFunction::MD5)
+        {
+            Hash tmp = CryptoUtils::generateMD5(pass);
+            passHash = tmp;
+        }
 		if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
 		{
 			std::cout << "success!" << std::endl;
-			std::cout << this->key << " is " << "sha1(" << pass << ")"<< std::endl;
+			std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
 			break;
 		}
 		else
@@ -133,13 +143,23 @@ void Attack::check_suffixes(std::string pass, int level = 0)
         std::string pass2 = pass;
         for(int i = 0; i < suffixes.length(); i++)
         {
-            Hash h = CryptoUtils::generateSHA1(pass2);
+            Hash h;
+            if (function == HashingFunction::SHA1)
+            {
+                Hash tmp = CryptoUtils::generateSHA1(pass2);
+                h = tmp;
+            }
+            else if (function == HashingFunction::MD5)
+            {
+                Hash tmp = CryptoUtils::generateMD5(pass2);
+                h = tmp;
+            }
             //TODO: here should be method areHashesEqual
             std::cout << pass2 << " = " << CryptoUtils::convertHashToHexRep(h) << std::endl;
             if(CryptoUtils::convertHashToHexRep(h) == this->key)
             {
                 std::cout << "JACKPOT!" << std::endl;
-                std::cout << this->key << " is " << "sha1(" << pass2 << ")"<< std::endl;
+                std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
                 return;
             }
 
