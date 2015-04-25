@@ -18,7 +18,8 @@ ALLOWED_HOSTS = []
 
 MY_SOCKET_ADDRESS = 'tcp://192.168.70.200:5557'
 #CLUSTERS = [{'id':'1', 'address': '192.168.70.101', 'username': 'vagrant', 'password': 'vagrant', 'socket_address':'tcp://192.168.70.101:5558'}]
-#CLUSTERS = []
+SEED = 10
+CLUSTERS = []
 
 # Application definition
 

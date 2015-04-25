@@ -23,7 +23,7 @@ def sync_cluster(cluster, transmiter, context):
 
   return receiver
 
-def start_deamons(clusters, my_address):
+def start_deamons(clusters, my_address, seed):
   for cluster in clusters:
     client = paramiko.SSHClient()
     client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -31,4 +31,4 @@ def start_deamons(clusters, my_address):
       username=cluster['username'],
       password=cluster['password'])
 
-    client.exec_command('CLUSTER_ID=%s DJANGO_ADRESS=%s /etc/init.d/mpi restart' % (cluster['id'], my_address))
+    client.exec_command('CLUSTER_ID=%s DJANGO_ADRESS=%s SEED=%s /etc/init.d/mpi restart' % (cluster['id'], my_address, seed))
