@@ -18,6 +18,11 @@ std::string RainbowCracker::reduce(Hash& hash, int position, int table_index, in
 				break;
 		}
 	}
+	if (extracted_digits < password_length)
+	{
+		for (int i = 0; i < password_length - extracted_digits; ++i)
+			new_key += "0";
+	}
 	return new_key;
 }
 
