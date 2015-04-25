@@ -13,6 +13,10 @@ int main(int argc, const char * argv[]) {
     rainbow->setChainsRange(0, 5);
     rainbow->defeatKey();
 
+    Attack *rainbow_md5 = new Attack(AttackType::rainbow, "3416a75f4cea9109507cacd8e2f2aefc", HashingFunction::MD5);
+    rainbow_md5->setChainsRange(0, 400);
+    rainbow_md5->defeatKey();
+
     Attack *bruteForce = new Attack(AttackType::bruteForce, "761f22b2c1593d0bb87e0b606f990ba4974706de", HashingFunction::SHA1);
 	bruteForce->defeatKey();
 

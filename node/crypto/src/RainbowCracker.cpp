@@ -39,7 +39,7 @@ void RainbowCracker::generateChains(int start, int end, int pass_length,
 	for (int i = start; i <= end; ++i)
 	{
 		chains.push_back(generateVerySimpleChain(std::to_string(i), 100, 2,
-			HashingFunction::SHA1));
+			function));
 	}
 }
 
@@ -47,34 +47,45 @@ Chain RainbowCracker::generateVerySimpleChain(const std::string initial_text, in
 	int pass_length, HashingFunction function)
 {
 	std::string current_text = std::string(initial_text);
-	// Trzeba poprawić, żeby nie trzeba było robić takich brzydkich ifów :)
-	if (function == HashingFunction::SHA1)
+	for (int i(0); i < iterations; ++i)
 	{
-		for (int i(0); i < iterations; ++i)
+		Hash hash;
+		if (function == HashingFunction::SHA1)
 		{
-			Hash hash = CryptoUtils::generateSHA1(current_text);
-			std::string x = CryptoUtils::convertHashToHexRep(hash);
-			current_text = reduce(hash, 0, 0, pass_length);
+			Hash tmp = CryptoUtils::generateSHA1(current_text);
+			hash = tmp;
 		}
+		else if (function == HashingFunction::MD5)
+		{
+			Hash tmp = CryptoUtils::generateMD5(current_text);
+			hash = tmp;
+		}
+		current_text = reduce(hash, 0, 0, pass_length);
 	}
-	return Chain(HashingFunction::SHA1, "0123456789", initial_text,
+	return Chain(function, "0123456789", initial_text,
 		0, pass_length, 0, iterations);
 }
 
 std::string RainbowCracker::checkChain(const Chain& chain, Hash& desired_hash, HashingFunction function)
 {
 	std::string text = std::string(chain.initial_password_);
-	// Trzeba poprawić, żeby nie trzeba było robić takich brzydkich ifów :)
-	if (function == HashingFunction::SHA1)
+	for (int i(0); i < chain.iterations_; ++i)
 	{
-		for (int i(0); i < chain.iterations_; ++i)
+		Hash hash;
+		if (function == HashingFunction::SHA1)
 		{
-			Hash hash = CryptoUtils::generateSHA1(text);
-			std::cout << CryptoUtils::convertHashToHexRep(hash) << std::endl;
-			if (CryptoUtils::areHashesEqual(hash, desired_hash))
-				return text;
-			text = reduce(hash, 0, 0, chain.password_length_);
+			Hash tmp = CryptoUtils::generateSHA1(text);
+			hash = tmp;
 		}
+		else if (function == HashingFunction::MD5)
+		{
+			Hash tmp = CryptoUtils::generateMD5(text);
+			hash = tmp;
+		}
+		std::cout << CryptoUtils::convertHashToHexRep(hash) << std::endl;
+		if (CryptoUtils::areHashesEqual(hash, desired_hash))
+			return text;
+		text = reduce(hash, 0, 0, chain.password_length_);
 	}
 	return "";
 }
