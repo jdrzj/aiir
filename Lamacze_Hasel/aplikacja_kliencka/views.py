@@ -240,6 +240,12 @@ def get_passwords(request,id):
 
 @login_required
 def task_details(request, id):
-    context = {'id' : id}
+    context = {'task' :  Task.objects.get(pk=id)}
     return render(request, "aplikacja_kliencka/task_details.html", context)
 
+@login_required
+def password_details(request, id):
+    password = Password.objects.get(pk=id)
+    password.password_cracking_algorithm = Password.objects.get(pk=id).get_password_cracking_algorithm_display()
+    context = {'password' :  password}
+    return render(request, "aplikacja_kliencka/password_details.html", context)

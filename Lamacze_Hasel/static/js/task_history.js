@@ -58,8 +58,9 @@ function grid() {
 			jQuery("#"+subgrid_table_id).jqGrid({
 				url:"/get_passwords/" + rowData['id'],
 				datatype: "json",
-				colNames: ["Id", "Algorytm", "Metoda Rozwiązania", "Hash", "Hasło", "Data Rozpoczęcia", "Data Zakończenia"],
+				colNames: ["","Id", "Algorytm", "Metoda Rozwiązania", "Hash", "Hasło", "Data Rozpoczęcia", "Data Zakończenia"],
 				colModel: [
+                    { name:'action',index:'action',sortable:false, width: 68, search:false, formatter: displayDetails },
 					{ name: "id", width: 55, sorttype: "int", key: true, align: "center", resizable: true, sortable: true, search:false},
 					{ name: "algorithm", width: 110 , sorttype: "text", align: "center",  resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
                     { name: "password_cracking_algorithm", width: 110 , sorttype: "text", align: "center",  resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
@@ -115,18 +116,27 @@ function displayButtons(cellvalue, options, rowObject)
 	container.append(btn);
 	return container.html();
 }
+function displayDetails(cellvalue, options, rowObject)
+{
+	var container = $("<div></div>");
 
+	var btn = $("<button type='button' class='password_history_details'>Szczegóły</button>");
+
+	btn.val(JSON.stringify(rowObject));
+	container.append(btn);
+	return container.html();
+}
 $(document).ready( function(){
     grid();
 
-      $(document).on("click", ".task_history_details", function(e){
+  $(document).on("click", ".task_history_details", function(e){
         e.preventDefault();
         var row_content = $(this).val();
         var row_content_json = JSON.parse(row_content);
         var url = '/task_details/' + row_content_json.id + "/"
-        var d = $("<div class='warning'></div>");
-                d.load(url);
+        var d = $("<div class='warning'><iframe width='100%' height='100%' src="+ url + "></iframe></div>");
                 d.dialog({
+                        width : 500,
                         buttons: [
                             {
                               text: "Ok",
@@ -134,7 +144,34 @@ $(document).ready( function(){
                                 primary: "ui-icon-heart"
                               },
                               click: function() {
-                                $( this ).dialog( "close" );
+                                $( this ).dialog( "destroy" );
+                              }
+                            }
+                          ]
+                    });
+
+
+        e.preventDefault();
+
+    });
+
+    $(document).on("click", ".password_history_details", function(e){
+        e.preventDefault();
+        var row_content = $(this).val();
+        var row_content_json = JSON.parse(row_content);
+        var url = '/password_details/' + row_content_json.id + "/"
+        var d = $("<div class='warning'><iframe width='100%' height='100%' src="+ url + "></iframe></div>");
+                d.dialog({
+                        width : 400,
+                        height : 400,
+                        buttons: [
+                            {
+                              text: "Ok",
+                              icons: {
+                                primary: "ui-icon-heart"
+                              },
+                              click: function() {
+                                $( this ).dialog( "destroy" );
                               }
                             }
                           ]
