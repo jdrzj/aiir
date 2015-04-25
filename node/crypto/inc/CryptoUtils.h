@@ -8,9 +8,11 @@
 
 // Jak głosi dokumentacja OpenSSL:
 // SHA_DIGEST_LENGTH == 20 bytes of output
+// MD5_DIGEST_LENGTH == 16 bytes of output
 constexpr int SHA_HASH_LENGTH = 20;
+constexpr int MD5_HASH_LENGTH = 16;
 
-enum class HashingFunction { SHA1 /*MD5, itd.*/ };
+enum class HashingFunction { SHA1, MD5 };
 
 
 // Klasa obudowująca hasze zwracane przez OpenSSL.
@@ -30,6 +32,8 @@ public:
 	{
 		if (function_ == HashingFunction::SHA1)
 			size_ = SHA_HASH_LENGTH;
+		else if (function_ == HashingFunction::MD5)
+			size_ = MD5_HASH_LENGTH;
 		// ... i tak dalej
 
 		hash_byte_rep_ = std::shared_ptr<unsigned char>(new unsigned char[size_]);
@@ -74,6 +78,7 @@ class CryptoUtils
 {
 public:
 	static Hash generateSHA1(const std::string& text);
+	static Hash generateMD5(const std::string& text);
 	static std::string convertHashToHexRep(Hash& hash);
 	static Hash convertHexRepToHash(const std::string& hex_hash, HashingFunction function);
 	static bool areHashesEqual(Hash& first, Hash& second);
