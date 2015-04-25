@@ -1,0 +1,192 @@
+\documentclass[a4paper,10pt]{article}
+\usepackage[top=1.5in, bottom=1.5in, left=0.8in, right=0.8in]{geometry}
+\usepackage[utf8x]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english,polish]{babel}
+\usepackage{titlesec}
+\setcounter{secnumdepth}{4}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\usepackage{indentfirst}
+\usepackage{hhline}
+\usepackage{fixltx2e}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{capt-of}
+\usepackage{tabularx}
+\usepackage{multirow}
+\usepackage{array}
+\usepackage{listingsutf8}
+\usepackage{longtable}
+\usepackage{tikz}
+\usepackage{tabularx}
+\usepackage{float}
+\usetikzlibrary{matrix,calc}
+\usepackage{listings}
+\lstset{
+    language=C,
+    basicstyle=\ttfamily\small,
+    backgroundcolor=\color{gray!10},
+    frame=single,
+    tabsize=2,
+    rulecolor=\color{black!30},
+    title=\lstname,
+    escapeinside={\%*}{*)},
+    breaklines=\true,
+    breakatwhitespace=true,
+    framextopmargin=2pt,
+    framexbottommargin=2pt,
+    inputencoding=utf8x, 
+    extendedchars=\true,
+    literate={ą}{{\k{a}}}1
+             {Ą}{{\k{A}}}1
+             {ę}{{\k{e}}}1
+             {Ę}{{\k{E}}}1
+             {ó}{{\'o}}1
+             {Ó}{{\'O}}1
+             {ś}{{\'s}}1
+             {Ś}{{\'S}}1
+             {ł}{{\l{}}}1
+             {Ł}{{\L{}}}1
+             {ż}{{\.z}}1
+             {Ż}{{\.Z}}1
+             {ź}{{\'z}}1
+             {Ź}{{\'Z}}1
+             {ć}{{\'c}}1
+             {Ć}{{\'C}}1
+             {ń}{{\'n}}1
+             {Ń}{{\'N}}1
+}
+\renewcommand{\topfraction}{.85}
+\renewcommand{\bottomfraction}{.7}
+\renewcommand{\textfraction}{.15}
+\renewcommand{\floatpagefraction}{.66}
+\renewcommand{\dbltopfraction}{.66}
+\renewcommand{\dblfloatpagefraction}{.66}
+\addto\captionspolish{
+  \renewcommand{\contentsname}
+    {Spis treści}
+}
+
+\begin{document}
+
+\thispagestyle{empty}
+
+
+\hfill Wrocław, dn.\today\\
+\begin{minipage}[c]{0.4\columnwidth}
+  \textbf{Zespół:}\\
+  Piotr Chmiel\\
+  Tomasz Bagiński\\
+  Maciej Stelmaszuk\\
+  Jakub Stasiak\\
+  Jędrzej Urbański\\
+  Aleksandra Berjak\\
+  
+\end{minipage}
+\hfill
+\vspace{2.5cm}
+\begin{center}
+  \begin{LARGE}
+    \emph{ Aplikacje internetowe i rozproszone - projekt} \\
+  \end{LARGE}
+  \begin{Large}
+    \emph{Podsumowanie dotychczasowych osiągnięć} \\
+  \end{Large}
+  \vspace{1.0cm}
+    Sprawdzenie czy zadany zbiór zaszyfrowanych haseł może (i w jakim czasie) zostać złamany za pomocą komputera równoległego jakim jest klaster stacji roboczych. Różne metody łamania haseł (słownikowa, brute force, tablice tęczowe)
+\end{center}
+
+\begin{center}
+  Rok akad. 2014/2015, kierunek: INF
+\end{center}
+\vspace{1.2cm}
+\begin{flushright}
+\begin{minipage}[t]{0.4\columnwidth}
+\noindent
+PROWADZĄCY:\\
+dr hab. inż.~Henryk Maciejewski
+\end{minipage}
+\end{flushright}
+\vfill
+\newpage
+\tableofcontents{}
+\section{Wykonane zadania: Ogólnie}
+
+\begin{enumerate}
+	\item Implementacja algorytmu łamania hasła: metoda słownikowa dla hashy SHA1. (wersja MPI)
+	\item Implementacja algorytmu łamania hasła: tablice tęczowe dla hashy SHA1, hasła numeryczne. (wersja MPI)
+	\item Implementacja algorytmu łamania hasła: metoda brute force dla hashy SHA1. (wersja sekwencyjna)
+	\item Opracowanie i implementacja komunikacji pomiędzy aplikacją MPI, a aplikacją webową Django.
+	\item Implementacja aplikacji klienckiej Django.
+	
+\end{enumerate}
+
+\section{Wykonane zadania: Jędrzej Urbański}
+
+\subsection{Implementacja algorytmu łamania hasła: metoda słownikowa dla hashy SHA1. (wersja MPI)}
+
+\begin{enumerate}
+	\item Implementacja algorytmu słownikowego wraz z modułem do wszystkich możliwych wariacji hasła i dopisywanie możliwości przyrostków.
+	\item Połączenie modułu C++ i aplikacji klienckiej Django z wykorzystaniem dostępnych modułów.
+\end{enumerate}
+
+
+\section{Wykonane zadania: Aleksandra Berjak}
+
+\subsection{Implementacja algorytmu łamania hasła: tablice tęczowe dla hashy SHA1, hasła numeryczne. (wersja MPI)}
+
+\begin{enumerate}
+	\item Stworzenie klasy typu utility jako narzędzie do operacji na hashach (reprezentacja hasha w pamięci, porównywanie dwóch hashy, konwersja hasha z postaci łańcuchu znaków heksadecymalnych do tablicy o określonej liczbie bajtów (np. 20 dla SHA1).
+	\item Implementacji algorytmu przeszukiwania tablic.
+	\item Implementacja prostego generatora tablic dla ciągów składających się wyłącznie z cyfr 0-9.
+	\item Możliwość podzielenia zadania dzielenia hasła na mniejsze podzadania.
+\end{enumerate}
+
+\section{Wykonane zadania: Tomasz Bagiński}
+
+\subsection{Implementacja algorytmu łamania hasła: metoda brute force dla hashy SHA1. (wersja sekwencyjna)}
+
+\begin{enumerate}
+	\item Implementacja funkcji generującej ciągi znaków. które następnie są hashowane i porównywane z hashem wygenerowanym (za pomocą biblioteki OpenSSL) dla łamanego hasła.
+	\item Implementacja funkcji inkrementującej ciąg znaków do generowania potencjalnych haseł. 
+	
+\end{enumerate}
+
+\section{Wykonane zadania: Jakub Stasiak}
+
+\subsection{Opracowanie i implementacja komunikacji pomiędzy aplikacją MPI, a aplikacją webową Django.}
+
+\begin{enumerate}
+	\item Opracowanie schematu bazy danych do przechowywania zadań.
+	\item Stworzenie plików konfiguracyjnych Vagrant dla klastra.
+	\item Opracowanie i implementacja architektury komunikacyjnej wraz z jej opisem.
+\end{enumerate}
+
+\section{Wykonane zadania: Piotr Chmiel}
+
+\subsection{Implementacja aplikacji klienckiej Django}
+
+\begin{enumerate}
+	\item Implementacja logowania, wylogowywania, zmiany hasła i autoryzacji użytkowników.
+	\item Implementacja panelu administratora.
+	\item Implementacja widoku pokazującego aktualne zadania w tabeli.
+	\item Implementacja widoku pokazującego historię zadań w tabeli.
+	\item Implementacja widoku szczegółówego zadania (pasek postępu).
+\end{enumerate}
+
+\section{Wykonane zadania: Maciej Stelmaszuk}
+
+\subsection{Implementacja aplikacji klienckiej Django}
+
+\begin{enumerate}
+	\item Implementacja rejestracji użytkowników.
+	\item Implementacja widoku edycji profilu użytkownika.
+	\item Implementacja formularza dodawania pojedynczego zadania.
+	\item Implementacja formularza dodawania wielu zadań z pliku *.txt.
+\end{enumerate}
+
+\end{document}
