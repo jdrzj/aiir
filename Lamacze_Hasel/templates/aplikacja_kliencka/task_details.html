@@ -25,9 +25,31 @@
     <p> Status </p>
     <div class="container">
       <div class="progress" style="margin: 2% ">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="{{ task.status }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ task.status }}%">
+        <div class="progress-bar progress-bar-striped active" id="progress_bar" role="progressbar"
+             aria-valuenow="{{ task.status }}" aria-valuemin="0" aria-valuemax="100" style="width:{{ task.status }}%">
           {{ task.status }}%
         </div>
       </div>
     </div>
+    <script>
+    $(document).ready(
+            function() {
+                setInterval(function() {
+
+                    var id = "{{ task.id }}";
+                    var url = "/get_status/";
+                    $.ajax({
+                        url: url,
+                        type: "POST",
+                        data: {'id': id},
+                        success: function(data){
+                            message = '<span class="' + data.status + '">' + data.result + '</span> ';
+                            message = ( data.status == 'success' ) ? message + data.fileLink : message;
+                            status = data.task_status + "%";
+                            $("#progress_bar").text(status).css({"width":status, "aria_valuenow": data.task_status});
+                        }
+                   })
+                }, 3000);
+            });
+</script>
 </body>

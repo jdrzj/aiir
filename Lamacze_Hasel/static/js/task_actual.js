@@ -58,12 +58,13 @@ function grid() {
 			jQuery("#"+subgrid_table_id).jqGrid({
 				url:"/get_passwords/" + rowData['id'],
 				datatype: "json",
-				colNames: ["","Id", "Algorytm", "Metoda Rozwiązania", "Hash", "Hasło", "Data Rozpoczęcia", "Data Zakończenia"],
+				colNames: ["","Id", "Algorytm", "Metoda Rozwiązania", "Status", "Hash", "Hasło", "Data Rozpoczęcia", "Data Zakończenia"],
 				colModel: [
                     { name:'action',index:'action',sortable:false, width: 68, search:false, formatter: displayDetails },
 					{ name: "id", width: 55, sorttype: "int", key: true, align: "center", resizable: true, sortable: true, search:false},
 					{ name: "algorithm", width: 110 , sorttype: "text", align: "center",  resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
                     { name: "password_cracking_algorithm", width: 110 , sorttype: "text", align: "center",  resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
+                    { name: "status", width: 55 , sorttype: "text", align: "center",  resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
 					{ name: "hash", width: 400, align: "right", align: "center", resizable: true, sortable: true, searchoptions: { sopt: ['cn','nc','eq']} },
 					{ name: "password", width: 200, align: "right", align: "center", resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq']}},
 					{ name: "start_time", width: 150, align: "right", align: "center", resizable: true, sortable: true, searchoptions: {sopt: ['cn','nc','eq'] }},
@@ -139,6 +140,7 @@ $(document).ready( function(){
         var d = $("<div class='warning'><iframe width='100%' height='100%' src="+ url + "></iframe></div>");
                 d.dialog({
                         width : 500,
+                        height : 400,
                         buttons: [
                             {
                               text: "Ok",

@@ -28,11 +28,11 @@ class Password(models.Model):
     	('BF', 'Brute Force'),
 	)
 	hash = models.CharField(max_length=250)
-	password = models.CharField(max_length=250)
+	password = models.CharField(max_length=250, null=True, blank=True)
 	task = models.ForeignKey(Task, related_name='passwords')
 	status = models.IntegerField()
-	start_time = models.DateTimeField(null=True)
-	end_time = models.DateTimeField(null=True)
+	start_time = models.DateTimeField( null=True, blank=True)
+	end_time = models.DateTimeField(null=True, blank=True)
 	algorithm = models.CharField(max_length=30)
 	password_cracking_algorithm = models.CharField(max_length=2, choices=CRACKING_ALGORITHMS)
 
