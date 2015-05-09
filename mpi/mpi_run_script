@@ -21,7 +21,7 @@ start () {
 		np=`cat ~/.mpi_np`
 		echo 'Starting' >> $LOG_FILE
 		
-		nohup mpirun -np $np /vagrant/mpi $DJANGO_ADRESS $CLUSTER_ID &>> $LOG_FILE &
+		nohup mpirun -np $np /vagrant/mpi $DJANGO_ADRESS $CLUSTER_ID $SEED &>> $LOG_FILE &
 		echo $! > $PID_FILE
 	fi
 }

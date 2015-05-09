@@ -187,6 +187,10 @@ def add_task(request):
     return render(request, "aplikacja_kliencka/add_task.html")
 
 @login_required
+def add_tasks_from_file(request):
+    return render(request, "aplikacja_kliencka/add_tasks_from_file.html")
+
+@login_required
 def task_actual(request):
     context = {'undefined': 'undefined'}
     tasks_for_grid = Task.objects.filter(user=request.user).exclude(status=100).order_by('-id').values("id", "status",
@@ -196,7 +200,7 @@ def task_actual(request):
         if datetimefield['creation_date'] != None:
             datetimefield['creation_date'] = datetimefield['creation_date'].strftime("%b %d %Y %H:%M:%S")
         if datetimefield['end_time'] != None:
-            datetimefield['creation_date'] = datetimefield['creation_date'].strftime("%b %d %Y %H:%M:%S")
+            datetimefield['end_time'] = datetimefield['end_time'].strftime("%b %d %Y %H:%M:%S")
 
     context['gridData'] = json.dumps(gridData)
 
@@ -212,14 +216,14 @@ def task_history(request):
         if datetimefield['creation_date'] != None:
             datetimefield['creation_date'] = datetimefield['creation_date'].strftime("%b %d %Y %H:%M:%S")
         if datetimefield['end_time'] != None:
-            datetimefield['creation_date'] = datetimefield['creation_date'].strftime("%b %d %Y %H:%M:%S")
+            datetimefield['end_time'] = datetimefield['end_time'].strftime("%b %d %Y %H:%M:%S")
     context['gridData'] = json.dumps(gridData)
 
     return render(request, "aplikacja_kliencka/task_history.html",context)
 
 @login_required
 def get_passwords(request,id):
-    passwords_for_subgrid = Password.objects.filter(task=Task.objects.get(pk=id)).values("id", 'hash', 'password',
+    passwords_for_subgrid = Password.objects.filter(task=Task.objects.get(pk=id)).values("id", 'hash', 'password', 'status',
                                                                                   'start_time', 'end_time', 'algorithm',
                                                                                   'password_cracking_algorithm')
     for password in passwords_for_subgrid:
@@ -236,6 +240,57 @@ def get_passwords(request,id):
 
 @login_required
 def task_details(request, id):
-    context = {'id' : id}
+    context = {'task' :  Task.objects.get(pk=id)}
     return render(request, "aplikacja_kliencka/task_details.html", context)
 
+@login_required
+def password_details(request, id):
+    password = Password.objects.get(pk=id)
+    password.password_cracking_algorithm = Password.objects.get(pk=id).get_password_cracking_algorithm_display()
+    context = {'password' :  password}
+    return render(request, "aplikacja_kliencka/password_details.html", context)
+
+@csrf_exempt
+def get_status(request):
+    response_data = {}
+
+    if request.is_ajax():
+        try:
+            id = request.POST['id']
+        except:
+            response_data['status'] = "error"
+            response_data['result'] = "We're sorry, but something went wrong."
+        else:
+            task = Task.objects.get(pk=id)
+            response_data['status'] = "success"
+            response_data['result'] = "Your hash is generated"
+            response_data['task_status'] = task.status
+    else:
+        response_data['status'] = "error"
+        response_data['result'] = "We're sorry, but something went wrong"
+
+
+    return HttpResponse(json.dumps(response_data), content_type='application/json')
+
+@csrf_exempt
+def get_password_status(request):
+    response_data = {}
+
+    if request.is_ajax():
+        try:
+            id = request.POST['id']
+        except:
+            response_data['status'] = "error"
+            response_data['result'] = "We're sorry, but something went wrong."
+        else:
+            password = Password.objects.get(pk=id)
+            response_data['status'] = "success"
+            response_data['result'] = "Your hash is generated"
+            response_data['password_status'] = password.status
+            response_data['password'] = password.password
+    else:
+        response_data['status'] = "error"
+        response_data['result'] = "We're sorry, but something went wrong"
+
+
+    return HttpResponse(json.dumps(response_data), content_type='application/json')

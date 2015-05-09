@@ -16,10 +16,11 @@ TEMPLATE_DEBUG = True
 
 ALLOWED_HOSTS = []
 
-MY_SOCKET_ADDRESS = 'tcp://192.168.1.16:5557'
-CLUSTERS = [{'id':'1', 'address': '172.28.128.3', 'username': 'vagrant', 'password': 'vagrant', 'socket_address':'tcp://172.28.128.3:5558'}]
 
-#CLUSTERS = []
+MY_SOCKET_ADDRESS = 'tcp://192.168.70.200:5557'
+#CLUSTERS = [{'id':'1', 'address': '192.168.70.101', 'username': 'vagrant', 'password': 'vagrant', 'socket_address':'tcp://192.168.70.101:5558'}]
+SEED = 10
+CLUSTERS = []
 
 # Application definition
 

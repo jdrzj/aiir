@@ -27,6 +27,7 @@ Task::Task(zmq::message_t* message)
 	{
 		this->hash = pt.get<std::string> ("hash");
 		this->algorithm = pt.get<std::string> ("algorithm");
+		this->method = this->parseMathod(pt.get<std::string> ("password_cracking_algorithm"));
 	}
 }
 
@@ -45,15 +46,26 @@ std::string Task::getJson()
 
 	return buf.str();
 }
+std::string Task::getProgressJson()
+{
+	ptree pt;
+	pt.put ("id", this->id);
+
+	std::ostringstream buf;
+	write_json (buf, pt, false);
+
+	return buf.str();
+}
 
 std::string Task::getId()
 {
 	return this->id;
 }
 
+// Returns hash with leading method char
 std::string Task::getHash()
 {
-	return this->hash;
+	return this->method + this->hash;
 }
 
 void Task::setPassword(std::string password)
@@ -69,4 +81,23 @@ void Task::start()
 void Task::stop()
 {
 	this->end_time = time(0);
+}
+
+/**
+	* R - Rainbow tables
+	* B - Brute force
+	* D - Dictionary attack
+**/
+char Task::parseMathod(std::string password_cracking_algorithm)
+{
+	char result;
+	if (password_cracking_algorithm.compare("Metoda Slownikowa") == 0) {
+		result = 'D';
+	} else if (password_cracking_algorithm.compare("Tablice Teczowe") == 0) {
+		result = 'R';
+	} else {
+		result = 'B';
+	}
+
+	return result;
 }

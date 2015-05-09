@@ -86,6 +86,13 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
         touch /etc/.provisioned3
       fi
+    if [[ ! -e /etc/.provisioned4 ]]; then
+      cp /vagrant/mpi_run_script /etc/init.d/mpi
+      chmod +x /etc/init.d/mpi
+      chown vagrant /etc/init.d/mpi
+
+      touch /etc/.provisioned4
+    fi
   SCRIPT
   script.sub! 'N_VMS', N_VMS.to_s
   script.sub! 'N_VMS', N_VMS.to_s

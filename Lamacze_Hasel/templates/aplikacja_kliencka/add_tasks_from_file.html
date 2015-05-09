@@ -1,0 +1,91 @@
+{% extends 'aplikacja_kliencka/base.html' %}
+
+{% load staticfiles %}
+
+{% block title %}Dodawanie zadania{% endblock %}
+{% block body_block %}
+
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/css/add_task.css"/>
+
+    <div class="container add_task_container">
+        <div class="row pad-top">
+            <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <strong> Dodaj zadanie </strong>
+                    </div>
+                    <div class="panel-body">
+
+                        <div class="form-group input-group">
+
+                        <input type="file" name="files" id="fileInput">
+                        <textarea rows="15" cols="45" class="text" name="text" id="fileDisplayArea">
+{
+    "hashes": [{
+        "hash":"example hash",
+        "algorithm": "md5",
+        "password_cracking_algorithm": "Metoda Slownikowa"
+        },{
+        "hash":"example hash",
+        "algorithm": "sha1",
+        "password_cracking_algorithm": "Brute Force"
+        }],
+        "cluster": "cluster number"
+}
+                            </textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-success btn-sm dodaj">Dodaj</button>
+
+                        <hr />Skorzystaj z generatora hashy!  <a href={% url "aplikacja_kliencka:hash_generator" %} >Hash Generator</a>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </div>
+    <script>
+    $(document).on("click", ".dodaj", function(e) {
+        var url = "/mpi_send/";
+        var data = document.getElementById('fileDisplayArea').value;
+                    e.preventDefault();
+                    $.ajax({
+                        url: url,
+                        dataType: "json",
+                        type: "POST",
+                        data: JSON.stringify(JSON.parse(data)),
+                        success: function() {
+                            window.location='/task_actual/'
+                        }
+                   })}
+    );
+
+    </script>
+
+    <script>
+    window.onload = function() {
+		var fileInput = document.getElementById('fileInput');
+		var fileDisplayArea = document.getElementById('fileDisplayArea');
+
+		fileInput.addEventListener('change', function(e) {
+			var file = fileInput.files[0];
+			var textType = /text.*/;
+
+			if (file.type.match(textType)) {
+				var reader = new FileReader();
+
+				reader.onload = function(e) {
+					fileDisplayArea.innerText = reader.result;
+				}
+
+				reader.readAsText(file);
+			} else {
+				fileDisplayArea.innerText = "Zły format pliku";
+			}
+		});
+}
+    </script>
+{% endblock %}

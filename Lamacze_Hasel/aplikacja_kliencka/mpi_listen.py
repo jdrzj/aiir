@@ -1,4 +1,5 @@
 from aplikacja_kliencka.models import *
+from django.db.models import F
 from threading import Thread
 from datetime import datetime
 import json
@@ -16,10 +17,14 @@ class GetMessages(Thread):
       result['id'] = int(result['id'])
 
       password = Password.objects.filter(id=result['id'])[0]
-      password.password = result['password']
+      if result.get('password') is None:
+        password.status = F('status') + 1
 
-      password.start_time = datetime.fromtimestamp(int(result['start_time']))
-      password.end_time = datetime.fromtimestamp(int(result['end_time']))
+      else:
+        password.password = result['password']
+
+        password.start_time = datetime.fromtimestamp(int(result['start_time']))
+        password.end_time = datetime.fromtimestamp(int(result['end_time']))
+      
       password.save()
-
       print('%s received %s' % (self.cluster_id, result))

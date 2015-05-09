@@ -1,6 +1,7 @@
 #include "CryptoUtils.h"
 
 #include <openssl/sha.h>
+#include <openssl/md5.h>
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -14,6 +15,16 @@ Hash CryptoUtils::generateSHA1(const std::string& text)
 	const unsigned char* text_ptr = reinterpret_cast<const unsigned char*>(text.c_str());
 	Hash hash(HashingFunction::SHA1);
 	SHA1(text_ptr, text.size(), hash.getByteArray());
+	return hash;
+}
+
+// Na podstawie zmiennej std::string generuje i zwraca jej hash stworzony
+// przy pomocy funkcji MD5 dostępnej w bibliotece OpenSSL.
+Hash CryptoUtils::generateMD5(const std::string& text)
+{
+	const unsigned char* text_ptr = reinterpret_cast<const unsigned char*>(text.c_str());
+	Hash hash(HashingFunction::MD5);
+	MD5(text_ptr, text.size(), hash.getByteArray());
 	return hash;
 }
 

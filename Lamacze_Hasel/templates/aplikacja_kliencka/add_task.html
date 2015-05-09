@@ -6,9 +6,9 @@
 {% block body_block %}
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="/static/css/register.css"/>
+    <link rel="stylesheet" href="/static/css/add_task.css"/>
 
-    <div class="container register_container">
+    <div class="container add_task_container">
         <div class="row pad-top">
             <div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3 col-xs-10 col-xs-offset-1">
                 <div class="panel panel-default">
@@ -27,21 +27,24 @@
                              {% endfor %}
                         {% endif %}
 
+
                         <div class="form-group input-group">
                             <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
-                            <input type="text" name="password" class="form-control" placeholder="Hasło" id="id_password"
-                                   maxlength="30" name="password" type="text" required/>
-                        </div>
-                        <div class="form-group input-group">
-                            <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
-                            <input type="text" name="hash" class="form-control" placeholder="Hash" id="id_hash"
-                                   maxlength="40" name="hash" type="text" required/>
+                            <input type="text" name="hash" class="form-control" placeholder="Hash" id="id_hash" minlength="32" maxlength="40" name="hash" type="text" required/>
                         </div>
                         <div class="form-group">
                             <label for="id_algorithm">Algorytm:</label>
                              <select class="form-control" id="id_algorithm" name="algorithm">
                                 <option value="sha1">SHA1</option>
                                 <option value="md5">MD5</option>
+
+                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_method">Metoda:</label>
+                             <select class="form-control" id="id_method" name="crack_method">
+                                <option value="Metoda_slownikowa">Metoda słownikowa</option>
+                                <option value="Brute_Force">Brute Force</option>
 
                              </select>
                         </div>
@@ -54,6 +57,7 @@
                         <button type="submit" class="btn btn-success btn-sm dodaj">Dodaj</button>
 
                         <hr />Skorzystaj z generatora hashy!  <a href={% url "aplikacja_kliencka:hash_generator" %} >Hash Generator</a>
+                        <hr />Chcesz dodać więcej niż jeden hash?  <a href={% url "aplikacja_kliencka:add_tasks_from_file" %} >Dodaj z pliku</a>
                     </form>
                 </div>
             </div>
@@ -64,22 +68,31 @@
     </div>
     <script>
     $(document).on("click", ".dodaj", function(e) {
-        var password = $('input[name=password]').val()
         var hash = $('input[name=hash]').val();
-        var algorithm = $('select[name=algorithm]').val()
-        var cluster = $('input[name=cluster]').val()
+        var algorithm = $('select[name=algorithm]').val();
+        var cluster = $('input[name=cluster]').val();
+        var crack_method = $('select[name=crack_method]').val();
         var url = "/mpi_send/";
+
+        if ((hash.length == 32 && algorithm == "md5") || (hash.length == 40 && algorithm == "sha1")) {
 
                     e.preventDefault();
                     $.ajax({
                         url: url,
                         dataType: "json",
                         type: "POST",
-                        data: JSON.stringify({'hashes':[{'hash': hash, 'algorithm': algorithm}], 'cluster': cluster}),
+                        data: JSON.stringify({'hashes':[{'hash': hash, 'algorithm': algorithm, 'password_cracking_algorithm': crack_method}],
+                                              'cluster': cluster}),
                         success: function() {
                             window.location='/task_actual/'
                         }
-                   })});
+                   })}
+
+        else {
+                window.location = '/add_task/'
+                window.alert("Nieprawidłowy hash!");
+             }
+    });
 
     </script>
 {% endblock %}

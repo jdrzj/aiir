@@ -23,15 +23,16 @@ class Task(models.Model):
 class Password(models.Model):
 
 	CRACKING_ALGORITHMS = (
-    	('MS', 'Metoda Słownikowa'),
-    	('TT', 'Tablice Tęczowe'),
+    	('MS', 'Metoda Slownikowa'),
+    	('TT', 'Tablice Teczowe'),
     	('BF', 'Brute Force'),
 	)
 	hash = models.CharField(max_length=250)
-	password = models.CharField(max_length=250)
+	password = models.CharField(max_length=250, null=True, blank=True)
 	task = models.ForeignKey(Task, related_name='passwords')
-	start_time = models.DateTimeField(null=True)
-	end_time = models.DateTimeField(null=True)
+	status = models.IntegerField()
+	start_time = models.DateTimeField( null=True, blank=True)
+	end_time = models.DateTimeField(null=True, blank=True)
 	algorithm = models.CharField(max_length=30)
 	password_cracking_algorithm = models.CharField(max_length=2, choices=CRACKING_ALGORITHMS)
 
@@ -43,9 +44,12 @@ class Password(models.Model):
 				start_time = str(self.start_time),
 				end_time = str(self.end_time),
 				algorithm = self.algorithm,
-				password = self.password)
+				password = self.password,
+				status = self.status,
+				password_cracking_algorithm=self.password_cracking_algorithm)
 		else:
 			return json.dumps(dict(
 				id = str(self.id),
 				hash = self.hash,
-				algorithm = self.algorithm))
+				algorithm = self.algorithm,
+				password_cracking_algorithm=self.password_cracking_algorithm))
