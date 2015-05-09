@@ -27,7 +27,7 @@
                              {% endfor %}
                         {% endif %}
 
-                        </div>
+
                         <div class="form-group input-group">
                             <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
                             <input type="text" name="hash" class="form-control" placeholder="Hash" id="id_hash"
@@ -38,6 +38,14 @@
                              <select class="form-control" id="id_algorithm" name="algorithm">
                                 <option value="sha1">SHA1</option>
                                 <option value="md5">MD5</option>
+
+                             </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_method">Metoda:</label>
+                             <select class="form-control" id="id_method" name="crack_method">
+                                <option value="Metoda_slownikowa">Metoda słownikowa</option>
+                                <option value="Brute_Force">Brute Force</option>
 
                              </select>
                         </div>
@@ -62,8 +70,9 @@
     <script>
     $(document).on("click", ".dodaj", function(e) {
         var hash = $('input[name=hash]').val();
-        var algorithm = $('select[name=algorithm]').val()
-        var cluster = $('input[name=cluster]').val()
+        var algorithm = $('select[name=algorithm]').val();
+        var cluster = $('input[name=cluster]').val();
+        var crack_method = $('select[name=crack_method]').val();
         var url = "/mpi_send/";
 
         if ((hash.length == 32 && algorithm == "md5") || (hash.length == 40 && algorithm == "sha1")) {
@@ -73,7 +82,8 @@
                         url: url,
                         dataType: "json",
                         type: "POST",
-                        data: JSON.stringify({'hashes':[{'hash': hash, 'algorithm': algorithm}], 'cluster': cluster}),
+                        data: JSON.stringify({'hashes':[{'hash': hash, 'algorithm': algorithm, 'password_cracking_algorithm': crack_method}],
+                                              'cluster': cluster}),
                         success: function() {
                             window.location='/task_actual/'
                         }
