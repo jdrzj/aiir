@@ -27,7 +27,8 @@ Task::Task(zmq::message_t* message)
 	{
 		this->hash = pt.get<std::string> ("hash");
 		this->algorithm = pt.get<std::string> ("algorithm");
-		this->method = this->parseMathod(pt.get<std::string> ("password_cracking_algorithm"));
+		this->method = this->parseMethod(pt.get<std::string> ("password_cracking_algorithm"));
+		this->subtask_size = this->parseIntervalSize("");
 	}
 }
 
@@ -88,7 +89,7 @@ void Task::stop()
 	* B - Brute force
 	* D - Dictionary attack
 **/
-char Task::parseMathod(std::string password_cracking_algorithm)
+char Task::parseMethod(std::string password_cracking_algorithm)
 {
 	char result;
 	if (password_cracking_algorithm.compare("Metoda Slownikowa") == 0) {
@@ -99,5 +100,42 @@ char Task::parseMathod(std::string password_cracking_algorithm)
 		result = 'B';
 	}
 
-	return result;
+	//return result;
+	return 'R';
+}
+
+char Task::parseIntervalSize(std::string interval_size)
+{
+	return 'M';
+}
+
+SubtaskQueue<Subtask> Task::getSubtaskQueue()
+{
+	if (method == 'R')
+	{
+		if (subtask_size == 'S')
+			return SubtaskQueue<Subtask> { {0, 1000, 1}, {0, 1000, 2},
+				{0, 1000, 3}, {0, 1000, 4}, {0, 1000, 5}, {0, 1000, 6},
+				{0, 1000, 7}, {0, 1000, 8}, {0, 1000, 9}, {0, 1000, 10} };
+		if (subtask_size == 'M')
+			return SubtaskQueue<Subtask> { {0, 500, 1}, {501, 1000, 1},
+				{0, 500, 2}, {501, 1000, 2}, {0, 500, 3}, {501, 1000, 3},
+				{0, 500, 4}, {501, 1000, 4}, {0, 500, 5}, {501, 1000, 5},
+				{0, 500, 6}, {501, 1000, 6}, {0, 500, 7}, {501, 1000, 7},
+				{0, 500, 8}, {501, 1000, 8}, {0, 500, 9}, {501, 1000, 9},
+				{0, 500, 10}, {501, 1000, 10} };
+		if (subtask_size == 'B')
+			return SubtaskQueue<Subtask>
+				{ {0, 250, 1}, {251, 500, 1}, {501, 750, 1}, {751, 1000, 1},
+				{0, 250, 2}, {251, 500, 2}, {501, 750, 2}, {751, 1000, 2},
+				{0, 250, 3}, {251, 500, 3}, {501, 750, 3}, {751, 1000, 3},
+				{0, 250, 4}, {251, 500, 4}, {501, 750, 4}, {751, 1000, 4},
+				{0, 250, 5}, {251, 500, 5}, {501, 750, 5}, {751, 1000, 5},
+				{0, 250, 6}, {251, 500, 6}, {501, 750, 6}, {751, 1000, 6},
+				{0, 250, 7}, {251, 500, 7}, {501, 750, 7}, {751, 1000, 7},
+				{0, 250, 8}, {251, 500, 8}, {501, 750, 8}, {751, 1000, 8},
+				{0, 250, 9}, {251, 500, 9}, {501, 750, 9}, {751, 1000, 9},
+				{0, 250, 10}, {251, 500, 10}, {501, 750, 10}, {751, 1000, 10} };
+	}
+	return SubtaskQueue<Subtask> { };
 }
