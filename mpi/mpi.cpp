@@ -1,6 +1,5 @@
 #include "zhelpers.hpp"
 #include "task.hpp"
-#include "Attack.h"
 
 #include <mpi.h>
 
@@ -8,19 +7,9 @@ void master(char* django, char* clusterId, int world_size, int seed);
 void slave(int world_rank);
 void syncRecv(zmq::socket_t* recv);
 void syncTransmiter(zmq::socket_t* transmiter);
-bool recvMessage(int source, int tag, int *realSource, Subtask& subtask, std::string& result, bool allow_struct);
+std::string revcString(int source, int tag, int* realSource);
 char getMethod(std::string message);
 std::string getHash(std::string message);
-
-///////////////////////////////////////////////////////////////////////////////
-
-const int nitems = 3;
-int blocklengths[3] = { 1, 1, 1 };
-MPI_Datatype types[3] = {MPI_INT, MPI_INT, MPI_INT};
-long int offsets[3] { 0, 4, 8 };
-MPI_Datatype MPI_Subtask_type;
-
-///////////////////////////////////////////////////////////////////////////////
 
 // argv[1] = django sending adress & port
 // argv[2] = cluster id
@@ -28,10 +17,6 @@ MPI_Datatype MPI_Subtask_type;
 int main (int argc, char *argv[])
 {
     MPI_Init (&argc, &argv);
-
-    MPI_Type_create_struct(nitems, blocklengths, offsets, types, &MPI_Subtask_type);
-    MPI_Type_commit(&MPI_Subtask_type);
-
     int world_rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &world_rank);
     int world_size;
@@ -49,7 +34,6 @@ int main (int argc, char *argv[])
         slave(world_rank);
     }
 
-    MPI_Type_free(&MPI_Subtask_type);
     MPI_Finalize();
 }
 
@@ -70,61 +54,37 @@ void master(char* django, char* clusterId, int world_size, int seed)
     syncRecv(&taskQ);
     syncTransmiter(&resultQ);
 
-
     Task* task;
-    while (true)
-    {
+    while (true) {
         zmq::message_t message;
         taskQ.recv(&message);
         task = new Task(&message);
-        SubtaskQueue<Subtask> subtask_queue = task->getSubtaskQueue();
         task->start();
 
         std::string hash = task->getHash();
+        std::cout << "Master sending = " << hash << std::endl;
         int sent = 0;
-        for (int i = 1; i < world_size; i++)
-        {
-            std::cout << "MASTER: Sending hash and method to all the slaves" << std::endl;
+        for (int i = 1; i < world_size; i++) {
             MPI_Send((void*)hash.c_str(), hash.size(), MPI_CHAR, i, 0, MPI_COMM_WORLD);
             ++sent;
         }
 
-        for (int i = 1; i < world_size; i++)
-        {
-            std::cout << "MASTER: Distributing first subtasks" << std::endl;
-            Subtask new_subtask = subtask_queue.front();
-            subtask_queue.pop();
-            MPI_Send(&new_subtask, 1, MPI_Subtask_type, i, 0, MPI_COMM_WORLD);
-            ++sent;
-        }
-
-        std::string recvPass;
-        Subtask subtask;
-        std::string result;
-
         std::string password = "N/A";
-        do
-        {
+        for (int i = 0; i < seed; i++) {
             int realSource = 0;
-            recvMessage(MPI_ANY_SOURCE, 0, &realSource, subtask, result, false);
+            std::string recvPass = revcString(MPI_ANY_SOURCE, 0, &realSource);
             --sent;
-            std::cout << "MASTER: Received " << result << " from SLAVE no. " << realSource << std::endl;
+            std::cout << "Master get = " << recvPass << " @ " << realSource << std::endl;
 
-            if (result.compare(".") != 0) {
-                password = result;
+            if (recvPass.compare(".") != 0) {
+                password = recvPass;
                 break;
-            }
-            else if (!subtask_queue.empty())
-            {
+            } else {
                 ++sent;
-                Subtask new_subtask = subtask_queue.front();
-                subtask_queue.pop();
-                MPI_Send(&new_subtask, 1, MPI_Subtask_type, realSource, 0, MPI_COMM_WORLD);
+                MPI_Send((void*)hash.c_str(), hash.size(), MPI_CHAR, realSource, 0, MPI_COMM_WORLD);
                 s_send(resultQ, task->getProgressJson());
             }
-            else
-                break;
-        } while (true);
+        }
 
         task->stop();
         task->setPassword(password);
@@ -132,12 +92,10 @@ void master(char* django, char* clusterId, int world_size, int seed)
         s_send(resultQ, task->getJson());
 
         // Cleaning
-        for (int i = 0; i < sent; i++)
-        {
+        for (int i = 0; i < sent; i++) {
             int realSource = 0;
-            recvMessage(MPI_ANY_SOURCE, 0, &realSource, subtask, result, false);
+            revcString(MPI_ANY_SOURCE, 0, &realSource);
         }
-        std::cout << "MASTER: Cleaned up after this task.\n";
     }
 }
 
@@ -181,80 +139,52 @@ void syncTransmiter(zmq::socket_t* transmiter)
 void slave(int world_rank)
 {
     int realSource = 0;
-    std::string password;
-    Subtask subtask;
-    std::string result;
-    std::string hash;
-    AttackType type;
-    char method;
+    while (true) {
+        std::string message = revcString(0, 0, &realSource);
+        char method = getMethod(message);
+        std::string hash = getHash(message);
 
-    while (true)
-    {
-        // hardkodowe SHA-1
-        bool msg_type = recvMessage(0, 0, &realSource, subtask, result, true);
-
-        if (msg_type == 0)
-        {
-            method = getMethod(result);
-            hash = getHash(result);
-            switch (method)
-            {
-                case 'B':
-                    type = AttackType::bruteForce;
-                    break;
-                case 'D':
-                    type = AttackType::dictionary;
-                    break;
-                case 'R':
-                    type = AttackType::rainbow;
-                    break;
-            }
+        // Working hard...
+        std::string password;
+        switch (method) {
+        case 'B':
+            password = "brute force by " + std::to_string(world_rank);
+            break;
+        case 'D':
+            password = "dictionary attack by " + std::to_string(world_rank);
+            break;
+        case 'R':
+            password = "rainbow tables by " + std::to_string(world_rank);
+            break;
         }
-        else
-        {
-            Attack *attack = NULL;
-            attack = new Attack(type, hash, HashingFunction::SHA1);
-            attack->setLettersCount(subtask.pass_length);
-            attack->setChainsRange(subtask.start, subtask.end);
-            password = attack->defeatKey();
-            if (attack)
-                delete attack; 
-        }
-        if (password == "")
+        sleep(3);
+        if (rand() % 3 > 0) {
             password = ".";
+        }
 
         MPI_Send((void*)password.c_str(), password.size(), MPI_CHAR, 0, 0, MPI_COMM_WORLD);
     }
 }
 
-// 0 - wiadomość z hashem,
-// 1 - wiadomość z subtaskiem
-bool recvMessage(int source, int tag, int *realSource, Subtask& subtask, std::string& result, bool allow_struct)
+std::string revcString(int source, int tag, int *realSource)
 {
+    // http://mpitutorial.com/tutorials/dynamic-receiving-with-mpi-probe-and-mpi-status/
     MPI_Status status;
+    int len;
+    // Probe for an incoming message from process zero
     MPI_Probe(source, tag, MPI_COMM_WORLD, &status);
-    int msg_size;
-    MPI_Get_count(&status, MPI_BYTE, &msg_size);
 
-    if (allow_struct && msg_size == 3 * sizeof(int))
-    {
-        Subtask recv;
-        MPI_Recv(&recv, 1, MPI_Subtask_type, source, tag, MPI_COMM_WORLD, &status);
-        std::cout << "SLAVE: Received data (start = " << recv.start << ", end = "
-                  << recv.end << ", password length = " << recv.pass_length << ")\n";
-        subtask = recv;
-        return 1;
-    }
-    else
-    {
-        char* recv = (char*)malloc(sizeof(char) * msg_size);
-        MPI_Recv(recv, msg_size, MPI_CHAR, source, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
-        std::string new_result(recv, msg_size);
-        free(recv);
-        *realSource = status.MPI_SOURCE;
-        result = new_result;
-        return 0;
-    }
+    // When probe returns, the status object has the size and other
+    // attributes of the incoming message. Get the message size
+    MPI_Get_count(&status, MPI_CHAR, &len);
+    char* recv = (char*)malloc(sizeof(char) * len);
+    MPI_Recv(recv, len, MPI_CHAR, source, tag, MPI_COMM_WORLD, MPI_STATUS_IGNORE);
+
+    std::string result(recv, len);
+    free(recv);
+
+    *realSource = status.MPI_SOURCE;
+    return result;
 }
 
 char getMethod(std::string message)
