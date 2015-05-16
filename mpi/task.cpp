@@ -26,10 +26,16 @@ Task::Task(zmq::message_t* message)
 	if (this->id != "@" && this->id != "#")
 	{
 		this->hash = pt.get<std::string> ("hash");
-		this->algorithm = pt.get<std::string> ("algorithm");
+		this->algorithm = this->parseAlgorithm(pt.get<std::string> ("algorithm"));
 		this->method = this->parseMethod(pt.get<std::string> ("password_cracking_algorithm"));
 		this->subtask_size = this->parseIntervalSize("");
+
+		std::cout << "MASTER: New task created. Hash [" << this->hash << "], algorithm ["
+				  << this->algorithm << "], method [" << this->method << "], subtask size ["
+				  << this->subtask_size << "]\n";
 	}
+
+
 }
 
 std::string Task::getJson()
@@ -63,10 +69,10 @@ std::string Task::getId()
 	return this->id;
 }
 
-// Returns hash with leading method char
+// Returns hash with leading method char and subtask size char
 std::string Task::getHash()
 {
-	return this->method + this->hash;
+	return std::string(1, this->method) + std::string(1, this->algorithm) + this->hash;
 }
 
 void Task::setPassword(std::string password)
@@ -98,6 +104,18 @@ char Task::parseMethod(std::string password_cracking_algorithm)
 		result = 'R';
 	} else {
 		result = 'B';
+	}
+
+	return result;
+}
+
+char Task::parseAlgorithm(std::string algorithm)
+{
+	char result;
+	if (algorithm.compare("md5") == 0) {
+		result = 'M';
+	} else {
+		result = 'S';
 	}
 
 	return result;
