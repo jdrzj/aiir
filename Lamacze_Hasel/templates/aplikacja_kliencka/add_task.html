@@ -44,9 +44,9 @@
                         <div class="form-group">
                             <label for="id_method">Metoda:</label>
                              <select class="form-control" id="id_method" name="crack_method">
-                                <option value="Metoda_slownikowa">Metoda słownikowa</option>
-                                <option value="Brute_Force">Brute Force</option>
-
+                                <option value="MS">Metoda Słownikowa</option>
+                                <option value="BF">Brute Force</option>
+                                <option value="TT">Tablice Tęczowe</option>
                              </select>
                         </div>
                         <div class="form-group input-group">
@@ -85,12 +85,12 @@
                         data: JSON.stringify({'hashes':[{'hash': hash, 'algorithm': algorithm, 'password_cracking_algorithm': crack_method}],
                                               'cluster': cluster}),
                         success: function() {
-                            window.location='/task_actual/'
+                            window.location='/task_actual/';
                         }
                    })}
 
         else {
-                window.location = '/add_task/'
+                window.location = '/add_task/';
                 window.alert("Nieprawidłowy hash!");
              }
     });
