@@ -8,8 +8,9 @@ void master(char* django, char* clusterId, int world_size, int seed);
 void slave(int world_rank);
 void syncRecv(zmq::socket_t* recv);
 void syncTransmiter(zmq::socket_t* transmiter);
-bool recvMessage(int source, int tag, int *realSource, Subtask& subtask, std::string& result, bool allow_struct);
+bool recvMessage(int source, int tag, int *realSource, Subtask& subtask, std::string& result, int world_rank, bool allow_struct);
 char getMethod(std::string message);
+char getHashingFunction(std::string message);
 std::string getHash(std::string message);
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -106,7 +107,7 @@ void master(char* django, char* clusterId, int world_size, int seed)
         do
         {
             int realSource = 0;
-            recvMessage(MPI_ANY_SOURCE, 0, &realSource, subtask, result, false);
+            recvMessage(MPI_ANY_SOURCE, 0, &realSource, subtask, result, 0, false);
             --sent;
             std::cout << "MASTER: Received " << result << " from SLAVE no. " << realSource << std::endl;
 
@@ -135,7 +136,7 @@ void master(char* django, char* clusterId, int world_size, int seed)
         for (int i = 0; i < sent; i++)
         {
             int realSource = 0;
-            recvMessage(MPI_ANY_SOURCE, 0, &realSource, subtask, result, false);
+            recvMessage(MPI_ANY_SOURCE, 0, &realSource, subtask, result, 0, false);
         }
         std::cout << "MASTER: Cleaned up after this task.\n";
     }
@@ -186,15 +187,18 @@ void slave(int world_rank)
     std::string result;
     std::string hash;
     AttackType type;
+    HashingFunction hashing_function;
     char method;
+    char hashing_function_used;
 
     while (true)
     {
         // hardkodowe SHA-1
-        bool msg_type = recvMessage(0, 0, &realSource, subtask, result, true);
+        bool msg_type = recvMessage(0, 0, &realSource, subtask, result, world_rank, true);
 
         if (msg_type == 0)
         {
+            std::cout << "SLAVE #" << world_rank << ": Got a message: " << result << std::endl;
             method = getMethod(result);
             hash = getHash(result);
             switch (method)
@@ -209,11 +213,21 @@ void slave(int world_rank)
                     type = AttackType::rainbow;
                     break;
             }
+            hashing_function_used = getHashingFunction(result);
+            switch (hashing_function_used)
+            {
+                case 'M':
+                    hashing_function = HashingFunction::MD5;
+                    break;
+                case 'S':
+                     hashing_function = HashingFunction::SHA1;
+                    break;
+            }
         }
         else
         {
             Attack *attack = NULL;
-            attack = new Attack(type, hash, HashingFunction::SHA1);
+            attack = new Attack(type, hash, hashing_function);
             attack->setLettersCount(subtask.pass_length);
             attack->setChainsRange(subtask.start, subtask.end);
             password = attack->defeatKey();
@@ -229,7 +243,7 @@ void slave(int world_rank)
 
 // 0 - wiadomość z hashem,
 // 1 - wiadomość z subtaskiem
-bool recvMessage(int source, int tag, int *realSource, Subtask& subtask, std::string& result, bool allow_struct)
+bool recvMessage(int source, int tag, int *realSource, Subtask& subtask, std::string& result, int world_rank, bool allow_struct)
 {
     MPI_Status status;
     MPI_Probe(source, tag, MPI_COMM_WORLD, &status);
@@ -240,7 +254,8 @@ bool recvMessage(int source, int tag, int *realSource, Subtask& subtask, std::st
     {
         Subtask recv;
         MPI_Recv(&recv, 1, MPI_Subtask_type, source, tag, MPI_COMM_WORLD, &status);
-        std::cout << "SLAVE: Received data (start = " << recv.start << ", end = "
+        std::string text = world_rank ? "SLAVE #" + std::to_string(world_rank) : "MASTER";
+        std::cout << text << ": Received data (start = " << recv.start << ", end = "
                   << recv.end << ", password length = " << recv.pass_length << ")\n";
         subtask = recv;
         return 1;
@@ -262,7 +277,12 @@ char getMethod(std::string message)
     return message[0];
 }
 
+char getHashingFunction(std::string message)
+{
+    return message[1];
+}
+
 std::string getHash(std::string message)
 {
-    return message.substr(1, message.length());
+    return message.substr(2, message.length());
 }

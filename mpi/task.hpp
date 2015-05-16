@@ -33,12 +33,13 @@ private:
 	std::string password;
 	char subtask_size;
 	char method;
+	char algorithm;
 	time_t start_time;
 	time_t end_time;
-	std::string algorithm;
 
 	char parseMethod(std::string password_cracking_algorithm);
 	char parseIntervalSize(std::string interval_size);
+	char parseAlgorithm(std::string algorithm);
 
 public:
 	Task(std::string id);

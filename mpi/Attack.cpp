@@ -70,11 +70,6 @@ std::string Attack::rainbowAttack()
     RainbowCracker rainbow;
     rainbow.generateChains(chains_range_start, chains_range_end, letters_count, function);
     std::string pass = rainbow.run(desired_hash, function);
-    if (pass != "")
-    {
-    //    std::cout << "JACKPOT!" << std::endl;
-    //    std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
-    }
     return pass;
 }
 
