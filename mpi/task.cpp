@@ -92,16 +92,15 @@ void Task::stop()
 char Task::parseMethod(std::string password_cracking_algorithm)
 {
 	char result;
-	if (password_cracking_algorithm.compare("Metoda Slownikowa") == 0) {
+	if (password_cracking_algorithm.compare("MS") == 0) {
 		result = 'D';
-	} else if (password_cracking_algorithm.compare("Tablice Teczowe") == 0) {
+	} else if (password_cracking_algorithm.compare("TT") == 0) {
 		result = 'R';
 	} else {
 		result = 'B';
 	}
 
-	//return result;
-	return 'R';
+	return result;
 }
 
 char Task::parseIntervalSize(std::string interval_size)
