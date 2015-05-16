@@ -27,10 +27,9 @@ std::string Attack::defeatKey()
         return rainbowAttack();
     } 
     else if(this->type == AttackType::bruteForce)
-	{
-		bruteForceAttack();
-        return "";
-	}
+    {
+        return bruteForceAttack();
+    }
 };
 
 void Attack::setDictionaryFileName(const std::string& file_name)
@@ -44,8 +43,6 @@ void Attack::dictionaryAttack(std::string& file_name)
     std::fstream dictionary;
     dictionary.open(file_name, std::ios::in);
     std::string line;
-
-    //std::cout << "defeat key: " << this->key << std::endl;
 
     if(dictionary.good())
     {
@@ -65,7 +62,6 @@ void Attack::dictionaryAttack(std::string& file_name)
 
 std::string Attack::rainbowAttack()
 {
-    //std::cout << "defeat key: " << this->key << std::endl;
     Hash desired_hash = CryptoUtils::convertHexRepToHash(key, function);
     RainbowCracker rainbow;
     rainbow.generateChains(chains_range_start, chains_range_end, letters_count, function);
@@ -73,30 +69,35 @@ std::string Attack::rainbowAttack()
     return pass;
 }
 
-void Attack::bruteForceAttack()
+
+std::string Attack::bruteForceAttack()
 {
 	Hash desiredHash = CryptoUtils::convertHexRepToHash(key, function);
 	std::string pass = " ";
 	int stringPosition = 0;
+    int i = 1;
 	while(true)
 	{
-        Hash passHash;
-        if (function == HashingFunction::SHA1)
+        if (i % (world_rank + 1) == 0)
         {
-            Hash tmp = CryptoUtils::generateSHA1(pass);
-            passHash = tmp;
+            Hash passHash;
+            if (function == HashingFunction::SHA1)
+            {
+                Hash tmp = CryptoUtils::generateSHA1(pass);
+                passHash = tmp;
+            }
+            else if (function == HashingFunction::MD5)
+            {
+                Hash tmp = CryptoUtils::generateMD5(pass);
+                passHash = tmp;
+            }
+            if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
+            {
+                std::cout << "success!" << std::endl;
+                std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
+                return pass;
+            }
         }
-        else if (function == HashingFunction::MD5)
-        {
-            Hash tmp = CryptoUtils::generateMD5(pass);
-            passHash = tmp;
-        }
-		if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
-		{
-			std::cout << "success!" << std::endl;
-			std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
-			break;
-		}
 		else
 		{
 			CryptoUtils::incrementString(pass, stringPosition);
