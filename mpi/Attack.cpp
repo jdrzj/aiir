@@ -78,37 +78,39 @@ void Attack::rainbowAttack()
 
 std::string Attack::bruteForceAttack()
 {
-	Hash desiredHash = CryptoUtils::convertHexRepToHash(key, function);
-	std::string pass = " ";
-	int stringPosition = 0;
-    int i = 1;
-	while(true)
-	{
-        if (i % (world_rank + 1) == 0)
+    Hash desiredHash = CryptoUtils::convertHexRepToHash(key, function);
+    std::string pass = " ";
+    int stringPosition = 0;
+    int subtask_size = chains_range_end - chains_range_start;
+    // iterate to the subtask start
+    for (int i=0; i<chains_range_start; i++)
+    {
+        CryptoUtils::incrementString(pass, stringPosition);
+    }
+    for (int i=0; i<subtask_size; i++)
+    {
+        Hash passHash;
+        std::cout << pass << std::endl;
+        if (function == HashingFunction::SHA1)
         {
-            Hash passHash;
-            if (function == HashingFunction::SHA1)
-            {
-                Hash tmp = CryptoUtils::generateSHA1(pass);
-                passHash = tmp;
-            }
-            else if (function == HashingFunction::MD5)
-            {
-                Hash tmp = CryptoUtils::generateMD5(pass);
-                passHash = tmp;
-            }
-            if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
-            {
-                std::cout << "success!" << std::endl;
-                std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
-                return pass;
-            }
+            Hash tmp = CryptoUtils::generateSHA1(pass);
+            passHash = tmp;
         }
-		else
-		{
-			CryptoUtils::incrementString(pass, stringPosition);
-		}
-	}
+        else if (function == HashingFunction::MD5)
+        {
+            Hash tmp = CryptoUtils::generateMD5(pass);
+            passHash = tmp;
+        }
+        if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
+        {
+            return pass;
+        }
+        else
+        {
+            CryptoUtils::incrementString(pass, stringPosition);
+        }
+    }
+    return "";
 }
 
 void Attack::hackify(std::string pass)
