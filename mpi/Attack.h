@@ -13,6 +13,7 @@ class Attack {
     int chains_range_start;
     int chains_range_end;
     int letters_count;
+    int world_rank;
     const std::string suffixes = "1234567890!@#$^&*()_+{}.";
 
 public:
@@ -24,11 +25,12 @@ public:
     void check_suffixes(std::string pass, int level);
     void setChainsRange(int start, int end);
     void setLettersCount(int count);
+    void setWorldRank(int rank);
 private:
     void dictionaryAttack(std::string& file_name);
     std::string rainbowAttack();
     void hackify(std::string pass);
-    void bruteForceAttack();
+    std::string bruteForceAttack();
 };
 
-#endif // ATTACK_H
+#endif
