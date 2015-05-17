@@ -38,6 +38,8 @@ private:
 	char algorithm;
 	time_t start_time;
 	time_t end_time;
+	int progress;
+	int interval_count;
 
 	char parseMethod(std::string password_cracking_algorithm);
 	char parseIntervalSize(std::string interval_size);
@@ -50,8 +52,13 @@ public:
 	std::string getJson();
 	std::string getProgressJson();
 	std::string getHash();
+	int getStatus();
+	int getIntervalCount();
 	SubtaskQueue<Subtask> getSubtaskQueue();
 	void setPassword(std::string password);
+	void setProgress(int progress);
+	void setIntervalCount(int count);
+	void incrementProgress();
 	void start();
 	void stop();
 };

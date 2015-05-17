@@ -79,6 +79,8 @@ void master(char* django, char* clusterId, int world_size, int seed)
         taskQ.recv(&message);
         task = new Task(&message);
         SubtaskQueue<Subtask> subtask_queue = task->getSubtaskQueue();
+        task->setIntervalCount(subtask_queue.size());
+        s_send(resultQ, task->getProgressJson());
         task->start();
 
         std::string hash = task->getHash();
@@ -95,6 +97,8 @@ void master(char* django, char* clusterId, int world_size, int seed)
             std::cout << "MASTER: Distributing first subtasks" << std::endl;
             Subtask new_subtask = subtask_queue.front();
             subtask_queue.pop();
+            task->incrementProgress();
+            s_send(resultQ, task->getProgressJson());
             MPI_Send(&new_subtask, 1, MPI_Subtask_type, i, 0, MPI_COMM_WORLD);
             ++sent;
         }
@@ -113,6 +117,8 @@ void master(char* django, char* clusterId, int world_size, int seed)
 
             if (result.compare(".") != 0) {
                 password = result;
+                task->setProgress(task->getIntervalCount());
+                s_send(resultQ, task->getProgressJson());
                 break;
             }
             else if (!subtask_queue.empty())
@@ -120,6 +126,7 @@ void master(char* django, char* clusterId, int world_size, int seed)
                 ++sent;
                 Subtask new_subtask = subtask_queue.front();
                 subtask_queue.pop();
+                task->incrementProgress();
                 MPI_Send(&new_subtask, 1, MPI_Subtask_type, realSource, 0, MPI_COMM_WORLD);
                 s_send(resultQ, task->getProgressJson());
             }

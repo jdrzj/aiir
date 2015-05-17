@@ -57,6 +57,7 @@ std::string Task::getProgressJson()
 {
 	ptree pt;
 	pt.put ("id", this->id);
+	pt.put ("status", getStatus());
 
 	std::ostringstream buf;
 	write_json (buf, pt, false);
@@ -178,4 +179,29 @@ SubtaskQueue<Subtask> Task::getSubtaskQueue()
 		return sq;
 	}
 	return SubtaskQueue<Subtask> { };
+}
+
+int Task::getStatus()
+{
+	return (100 * progress / interval_count);
+}
+
+void Task::setProgress(int new_progress)
+{
+	progress = new_progress;
+}
+
+void Task::setIntervalCount(int count)
+{
+	interval_count = count;
+}
+
+void Task::incrementProgress()
+{
+	++progress;
+}
+
+int Task::getIntervalCount()
+{
+	return interval_count;
 }
