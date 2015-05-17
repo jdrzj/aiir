@@ -154,5 +154,28 @@ SubtaskQueue<Subtask> Task::getSubtaskQueue()
 				{0, 250, 9}, {251, 500, 9}, {501, 750, 9}, {751, 1000, 9},
 				{0, 250, 10}, {251, 500, 10}, {501, 750, 10}, {751, 1000, 10} };
 	}
+	else if (method == 'B')
+	{
+		int bins;
+		int max = 80000000;
+		if (subtask_size == 'S')
+		{
+			bins = 10;
+		}
+		else if (subtask_size == 'M')
+		{
+			bins = 20;
+		}
+		else if (subtask_size == 'B')
+		{
+			bins = 40;
+		}
+		SubtaskQueue<Subtask> sq;
+		int bin_size = max/bins;
+		for (int i=0; i<bins; i++) {
+			sq.push_back({i * bin_size, (i+1) * bin_size + 1, 0});
+		}
+		return sq;
+	}
 	return SubtaskQueue<Subtask> { };
 }

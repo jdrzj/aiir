@@ -19,10 +19,12 @@ class SubtaskQueue {
     container data;
 public:
     explicit SubtaskQueue(std::initializer_list<T> t) : data(t) {}
+    SubtaskQueue() { }
     void pop() { data.pop_front(); }
+    void push_back (T&& val) { return data.push_back(val); }
     T front() const { return data.front(); }
     bool empty() const { return data.empty();}
-    size_t size() const noexcept { return data.size(); };
+    size_t size() const noexcept { return data.size(); }
 };
 
 class Task
