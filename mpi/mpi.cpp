@@ -114,6 +114,7 @@ void master(char* django, char* clusterId, int world_size, int seed)
             recvMessage(MPI_ANY_SOURCE, 0, &realSource, subtask, result, 0, false);
             --sent;
             std::cout << "MASTER: Received " << result << " from SLAVE no. " << realSource << std::endl;
+            std::cout << "MASTER: Current status is " << task->getStatus() << "%\n";
 
             if (result.compare(".") != 0) {
                 password = result;
@@ -126,8 +127,8 @@ void master(char* django, char* clusterId, int world_size, int seed)
                 ++sent;
                 Subtask new_subtask = subtask_queue.front();
                 subtask_queue.pop();
-                task->incrementProgress();
                 MPI_Send(&new_subtask, 1, MPI_Subtask_type, realSource, 0, MPI_COMM_WORLD);
+                task->incrementProgress();
                 s_send(resultQ, task->getProgressJson());
             }
             else
@@ -137,6 +138,7 @@ void master(char* django, char* clusterId, int world_size, int seed)
         task->stop();
         task->setPassword(password);
 
+        std::cout << "MASTER: Current status is " << task->getStatus() << "%\n";
         s_send(resultQ, task->getJson());
 
         // Cleaning

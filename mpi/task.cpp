@@ -29,6 +29,7 @@ Task::Task(zmq::message_t* message)
 		this->algorithm = this->parseAlgorithm(pt.get<std::string> ("algorithm"));
 		this->method = this->parseMethod(pt.get<std::string> ("password_cracking_algorithm"));
 		this->subtask_size = this->parseIntervalSize("");
+		this->progress = 0;
 
 		std::cout << "MASTER: New task created. Hash [" << this->hash << "], algorithm ["
 				  << this->algorithm << "], method [" << this->method << "], subtask size ["
