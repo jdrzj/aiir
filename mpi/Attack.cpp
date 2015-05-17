@@ -84,7 +84,7 @@ std::string Attack::bruteForceAttack()
     for (int i=0; i<subtask_size; i++)
     {
         Hash passHash;
-        std::cout << pass << std::endl;
+        //std::cout << pass << std::endl;
         if (function == HashingFunction::SHA1)
         {
             Hash tmp = CryptoUtils::generateSHA1(pass);
