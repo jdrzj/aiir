@@ -14,7 +14,7 @@ class PasswordAdmin(admin.ModelAdmin):
         (None, {'fields': ['hash', 'password', 'task', 'status', 'start_time', 'end_time', 'algorithm',
                            'password_cracking_algorithm']}),
         ]
-    list_display = ('hash', 'password', 'status', 'start_time', 'task', 'end_time', 'algorithm', 'password_cracking_algorithm')
+    list_display = ('hash', 'password', 'task', 'status', 'start_time', 'end_time', 'algorithm', 'password_cracking_algorithm')
 
 admin.site.register(Task, TaskAdmin)
 admin.site.register(Password,PasswordAdmin)

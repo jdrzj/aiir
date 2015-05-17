@@ -10,7 +10,7 @@ class Task(models.Model):
 	end_time = models.DateTimeField(null=True, blank=True)
 
 	def __str__(self):
-		return self.cluster
+		return str(self.pk)
 
 	def json(self):
 		return dict(
