@@ -148,6 +148,7 @@ $(document).ready( function(){
                                 primary: "ui-icon-heart"
                               },
                               click: function() {
+                                refreshTaskActualView();
                                 $( this ).dialog( "destroy" );
                               }
                             }
@@ -175,6 +176,7 @@ $(document).ready( function(){
                                 primary: "ui-icon-heart"
                               },
                               click: function() {
+                                refreshTaskActualView();
                                 $( this ).dialog( "destroy" );
                               }
                             }
