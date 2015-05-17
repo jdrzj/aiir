@@ -10,8 +10,7 @@ using boost::property_tree::ptree;
 using boost::property_tree::read_json;
 using boost::property_tree::write_json;
 
-//int Task::dict_lines = 306613;
-int Task::dict_lines = 200;
+int Task::dict_lines = 306613;
 
 Task::Task(std::string id)
 {
@@ -137,14 +136,19 @@ char Task::parseAlgorithm(std::string algorithm)
 
 char Task::parseIntervalSize(std::string interval_size)
 {
-	return 'M';
+	if (graininess == 1)
+		return 'B';
+	else if (graininess == 2)
+		return 'M';
+	else if (graininess == 3)
+		return 'S';
 }
 
 SubtaskQueue<Subtask> Task::getSubtaskQueue()
 {
 	if (method == 'R')
 	{
-		if (subtask_size == 'S')
+		if (subtask_size == 'B')
 			return SubtaskQueue<Subtask> { {0, 1000, 1}, {0, 1000, 2},
 				{0, 1000, 3}, {0, 1000, 4}, {0, 1000, 5}, {0, 1000, 6},
 				{0, 1000, 7}, {0, 1000, 8}, {0, 1000, 9}, {0, 1000, 10} };
@@ -155,7 +159,7 @@ SubtaskQueue<Subtask> Task::getSubtaskQueue()
 				{0, 500, 6}, {501, 1000, 6}, {0, 500, 7}, {501, 1000, 7},
 				{0, 500, 8}, {501, 1000, 8}, {0, 500, 9}, {501, 1000, 9},
 				{0, 500, 10}, {501, 1000, 10} };
-		if (subtask_size == 'B')
+		if (subtask_size == 'S')
 			return SubtaskQueue<Subtask>
 				{ {0, 250, 1}, {251, 500, 1}, {501, 750, 1}, {751, 1000, 1},
 				{0, 250, 2}, {251, 500, 2}, {501, 750, 2}, {751, 1000, 2},
