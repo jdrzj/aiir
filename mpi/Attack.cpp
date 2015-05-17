@@ -76,32 +76,36 @@ std::string Attack::bruteForceAttack()
     std::string pass = " ";
     int stringPosition = 0;
     int subtask_size = chains_range_end - chains_range_start;
+    int bin_size = 1000;
     // iterate to the subtask start
     for (int i=0; i<chains_range_start; i++)
     {
-        CryptoUtils::incrementString(pass, stringPosition);
+        for (int j=0; j<bin_size; j++)
+            CryptoUtils::incrementString(pass, stringPosition);
     }
     for (int i=0; i<subtask_size; i++)
     {
-        Hash passHash;
-        //std::cout << pass << std::endl;
-        if (function == HashingFunction::SHA1)
+        for (int j=0; j<bin_size; j++)
         {
-            Hash tmp = CryptoUtils::generateSHA1(pass);
-            passHash = tmp;
-        }
-        else if (function == HashingFunction::MD5)
-        {
-            Hash tmp = CryptoUtils::generateMD5(pass);
-            passHash = tmp;
-        }
-        if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
-        {
-            return pass;
-        }
-        else
-        {
-            CryptoUtils::incrementString(pass, stringPosition);
+            Hash passHash;
+            if (function == HashingFunction::SHA1)
+            {
+                Hash tmp = CryptoUtils::generateSHA1(pass);
+                passHash = tmp;
+            }
+            else if (function == HashingFunction::MD5)
+            {
+                Hash tmp = CryptoUtils::generateMD5(pass);
+                passHash = tmp;
+            }
+            if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
+            {
+                return pass;
+            }
+            else
+            {
+                CryptoUtils::incrementString(pass, stringPosition);
+            }
         }
     }
     return "";

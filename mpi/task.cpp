@@ -158,7 +158,7 @@ SubtaskQueue<Subtask> Task::getSubtaskQueue()
 	else if (method == 'B')
 	{
 		int bins;
-		int max = 80000000;
+		int max = 8000000;
 		if (subtask_size == 'S')
 		{
 			bins = 10;
