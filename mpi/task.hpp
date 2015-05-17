@@ -41,6 +41,7 @@ private:
 	time_t end_time;
 	int progress;
 	int interval_count;
+	static int dict_lines;
 
 	char parseMethod(std::string password_cracking_algorithm);
 	char parseIntervalSize(std::string interval_size);

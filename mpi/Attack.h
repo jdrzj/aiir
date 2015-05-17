@@ -22,14 +22,14 @@ public:
     ~Attack();
     void setDictionaryFileName(const std::string& file_name);
     std::string defeatKey();
-    void check_suffixes(std::string pass, int level);
+    std::string checkSuffixes(std::string pass, int level);
     void setChainsRange(int start, int end);
     void setLettersCount(int count);
     void setWorldRank(int rank);
 private:
-    void dictionaryAttack(std::string& file_name);
+    std::string dictionaryAttack();
     std::string rainbowAttack();
-    void hackify(std::string pass);
+    std::string hackify(std::string pass);
     std::string bruteForceAttack();
 };
 

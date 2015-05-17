@@ -97,10 +97,10 @@ void master(char* django, char* clusterId, int world_size, int seed)
             std::cout << "MASTER: Distributing first subtasks" << std::endl;
             Subtask new_subtask = subtask_queue.front();
             subtask_queue.pop();
-            task->incrementProgress();
             s_send(resultQ, task->getProgressJson());
             MPI_Send(&new_subtask, 1, MPI_Subtask_type, i, 0, MPI_COMM_WORLD);
             ++sent;
+            task->incrementProgress();
         }
 
         std::string recvPass;
@@ -118,17 +118,16 @@ void master(char* django, char* clusterId, int world_size, int seed)
 
             if (result.compare(".") != 0) {
                 password = result;
-                task->setProgress(task->getIntervalCount());
                 s_send(resultQ, task->getProgressJson());
                 break;
             }
             else if (!subtask_queue.empty())
             {
                 ++sent;
+                task->incrementProgress();
                 Subtask new_subtask = subtask_queue.front();
                 subtask_queue.pop();
                 MPI_Send(&new_subtask, 1, MPI_Subtask_type, realSource, 0, MPI_COMM_WORLD);
-                task->incrementProgress();
                 s_send(resultQ, task->getProgressJson());
             }
             else
@@ -136,7 +135,9 @@ void master(char* django, char* clusterId, int world_size, int seed)
         } while (true);
 
         task->stop();
+        task->setProgress(task->getIntervalCount());
         task->setPassword(password);
+        s_send(resultQ, task->getProgressJson());
 
         std::cout << "MASTER: Current status is " << task->getStatus() << "%\n";
         s_send(resultQ, task->getJson());
@@ -237,8 +238,11 @@ void slave(int world_rank)
         {
             Attack *attack = NULL;
             attack = new Attack(type, hash, hashing_function);
+            attack->setWorldRank(world_rank);
             attack->setLettersCount(subtask.pass_length);
             attack->setChainsRange(subtask.start, subtask.end);
+            std::string dict_filename = "/vagrant/dict.txt";
+            attack->setDictionaryFileName(dict_filename);
             password = attack->defeatKey();
             if (attack)
                 delete attack; 

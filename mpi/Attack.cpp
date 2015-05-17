@@ -7,6 +7,9 @@
 #include "RainbowCracker.h"
 #include <cstring>
 
+std::fstream& go_to_line(std::fstream& file, unsigned int num);
+
+
 Attack::Attack(const AttackType& t, const std::string& k, HashingFunction
     f)
     : type(t)
@@ -19,8 +22,7 @@ std::string Attack::defeatKey()
 {
     if(this->type == AttackType::dictionary)
     {
-        dictionaryAttack(dictionary_file_name);
-        return "";
+       return dictionaryAttack();
     }
     else if(this->type == AttackType::rainbow)
     {
@@ -37,27 +39,38 @@ void Attack::setDictionaryFileName(const std::string& file_name)
     this->dictionary_file_name = file_name;
 };
 
-void Attack::dictionaryAttack(std::string& file_name)
+std::string Attack::dictionaryAttack()
 {
-    //a tutaj dzieci, dzieje się magia!
     std::fstream dictionary;
-    dictionary.open(file_name, std::ios::in);
+    std::string pass = "";
+    dictionary.open(dictionary_file_name, std::ios::in);
     std::string line;
-
-    if(dictionary.good())
+    int subtask_size = chains_range_end - chains_range_start;
+    int lines_visited = 0;
+    if (dictionary.good() && dictionary.is_open())
     {
-        std::cout << "GO" << std::endl;
+        go_to_line(dictionary, chains_range_start);
+        std::cout << "SLAVE #" << world_rank + 1 << ": Starting at line: " << chains_range_start << std::endl;
+        std::cout << "SLAVE #" << world_rank + 1 << ": Subtask size: " << subtask_size << std::endl;
         unsigned char * temp_uc;
-        while (std::getline(dictionary, line))
+        while (lines_visited < subtask_size && std::getline(dictionary, line))
         {
-            hackify(line);
+            ++lines_visited;
+            pass = hackify(line);
+            if (pass != "")
+                break;
         }
-        std::cout << "no match" << std::endl;
+        std::cout << "SLAVE #" << world_rank + 1 << ": Lines visited: " << lines_visited << std::endl;
+        dictionary.close();
     }
     else
     {
-        std::cout << "no such file " << file_name << std::endl;
+        if (dictionary.is_open())
+            dictionary.close();
+        else
+            std::cout << "SLAVE #" << world_rank + 1 << ": No such file: " << dictionary_file_name << std::endl;
     }
+    return (pass != "") ? pass : ".";
 };
 
 std::string Attack::rainbowAttack()
@@ -76,42 +89,38 @@ std::string Attack::bruteForceAttack()
     std::string pass = " ";
     int stringPosition = 0;
     int subtask_size = chains_range_end - chains_range_start;
-    int bin_size = 1000;
     // iterate to the subtask start
     for (int i=0; i<chains_range_start; i++)
     {
-        for (int j=0; j<bin_size; j++)
-            CryptoUtils::incrementString(pass, stringPosition);
+        CryptoUtils::incrementString(pass, stringPosition);
     }
     for (int i=0; i<subtask_size; i++)
     {
-        for (int j=0; j<bin_size; j++)
+        Hash passHash;
+        //std::cout << pass << std::endl;
+        if (function == HashingFunction::SHA1)
         {
-            Hash passHash;
-            if (function == HashingFunction::SHA1)
-            {
-                Hash tmp = CryptoUtils::generateSHA1(pass);
-                passHash = tmp;
-            }
-            else if (function == HashingFunction::MD5)
-            {
-                Hash tmp = CryptoUtils::generateMD5(pass);
-                passHash = tmp;
-            }
-            if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
-            {
-                return pass;
-            }
-            else
-            {
-                CryptoUtils::incrementString(pass, stringPosition);
-            }
+            Hash tmp = CryptoUtils::generateSHA1(pass);
+            passHash = tmp;
+        }
+        else if (function == HashingFunction::MD5)
+        {
+            Hash tmp = CryptoUtils::generateMD5(pass);
+            passHash = tmp;
+        }
+        if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
+        {
+            return pass;
+        }
+        else
+        {
+            CryptoUtils::incrementString(pass, stringPosition);
         }
     }
     return "";
 }
 
-void Attack::hackify(std::string pass)
+std::string Attack::hackify(std::string pass)
 {
     //liczba zapisana bitowo
     // 0 - downcase
@@ -119,6 +128,7 @@ void Attack::hackify(std::string pass)
 
     std::string s;
     std::string pass2;
+    std::string result = "";
     int x = pass.length();
     for(int i = 0; i < pow(2, pass.length()); i++)
     {
@@ -136,13 +146,17 @@ void Attack::hackify(std::string pass)
                 pass2[j] = tolower(pass[j]);
             }
         }
-        check_suffixes(pass2, 0);
+        result = checkSuffixes(pass2, 0);
+        if (result != "")
+            break;
     }
+    return result;
 }
 
-void Attack::check_suffixes(std::string pass, int level = 0)
+std::string Attack::checkSuffixes(std::string pass, int level)
 {
     const int max_level = 3;
+    std::string result = "";
     if(level != max_level)
     {
         std::string pass2 = pass;
@@ -163,17 +177,21 @@ void Attack::check_suffixes(std::string pass, int level = 0)
             std::cout << pass2 << " = " << CryptoUtils::convertHashToHexRep(h) << std::endl;
             if(CryptoUtils::convertHashToHexRep(h) == this->key)
             {
-                std::cout << "JACKPOT!" << std::endl;
-                std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
-                return;
+                //std::cout << "JACKPOT!" << std::endl;
+                //std::cout << this->key << " is " << "a hashed version of " << pass << std::endl;
+                result = pass2;
+                break;
             }
 
             pass2 = pass;
             pass2 += suffixes[i];
 
-            check_suffixes(pass2, level+1);
+            result = checkSuffixes(pass2, level+1);
+            if (result != "")
+                break;
         }
     }
+    return result;
 }
 
 void Attack::setChainsRange(int start, int end)
@@ -185,4 +203,19 @@ void Attack::setChainsRange(int start, int end)
 void Attack::setLettersCount(int count)
 {
     letters_count = count;
+}
+
+void Attack::setWorldRank(int rank)
+{
+    world_rank = rank;
+}
+
+std::fstream& go_to_line(std::fstream& file, unsigned int num)
+{
+    file.seekg(std::ios::beg);
+    for (int i=0; i < num - 1; ++i)
+    {
+        file.ignore(std::numeric_limits<std::streamsize>::max(),'\n');
+    }
+    return file;
 }

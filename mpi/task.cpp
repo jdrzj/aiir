@@ -3,10 +3,15 @@
 #include <sstream>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
+#include <fstream>
+#include <limits>
 
 using boost::property_tree::ptree;
 using boost::property_tree::read_json;
 using boost::property_tree::write_json;
+
+//int Task::dict_lines = 306613;
+int Task::dict_lines = 200;
 
 Task::Task(std::string id)
 {
@@ -183,6 +188,36 @@ SubtaskQueue<Subtask> Task::getSubtaskQueue()
 		int bin_size = max/bins;
 		for (int i=0; i<bins; i++) {
 			sq.push_back({i * bin_size, (i+1) * bin_size + 1, 0});
+		}
+		return sq;
+	}
+	// 5 przedzialow - mala ziarnistosc
+	// 50 przedzialow - srednia ziarnistosc
+	// 200 przedzialow - duza ziarnistosc
+	else if (method == 'D')
+	{
+		int bins;
+		int max = dict_lines;
+		if (subtask_size == 'S')
+		{
+			bins = 5;
+		}
+		else if (subtask_size == 'M')
+		{
+			bins = 50;
+		}
+		else if (subtask_size == 'B')
+		{
+			bins = 200;
+		}
+		SubtaskQueue<Subtask> sq;
+		int bin_size = max / bins;
+		for (int i=0; i < bins; i++)
+		{
+			int range_start = i * bin_size + 1;
+			int range_end = (i == bins - 1) ? max : (i + 1) * bin_size;
+			std::cout << "MASTER: New subtask, range start " << range_start << ", range end " << range_end << std::endl;
+			sq.push_back({range_start, range_end, 0});
 		}
 		return sq;
 	}
