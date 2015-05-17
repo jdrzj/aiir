@@ -33,6 +33,7 @@ private:
 	std::string id;
 	std::string hash;
 	std::string password;
+  int graininess;
 	char subtask_size;
 	char method;
 	char algorithm;
@@ -53,6 +54,7 @@ public:
 	std::string getProgressJson();
 	std::string getHash();
 	int getStatus();
+  int getGraininess();
 	int getIntervalCount();
 	SubtaskQueue<Subtask> getSubtaskQueue();
 	void setPassword(std::string password);

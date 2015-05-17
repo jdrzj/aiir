@@ -28,12 +28,13 @@ Task::Task(zmq::message_t* message)
 		this->hash = pt.get<std::string> ("hash");
 		this->algorithm = this->parseAlgorithm(pt.get<std::string> ("algorithm"));
 		this->method = this->parseMethod(pt.get<std::string> ("password_cracking_algorithm"));
+		this->graininess = std::stoi(pt.get<std::string> ("graininess"));
 		this->subtask_size = this->parseIntervalSize("");
 		this->progress = 0;
 
 		std::cout << "MASTER: New task created. Hash [" << this->hash << "], algorithm ["
 				  << this->algorithm << "], method [" << this->method << "], subtask size ["
-				  << this->subtask_size << "]\n";
+				  << this->subtask_size << "], graininess [" << this->graininess <<"]\n";
 	}
 
 
@@ -54,6 +55,12 @@ std::string Task::getJson()
 
 	return buf.str();
 }
+
+int Task::getGraininess()
+{
+	return this->graininess;
+}
+
 std::string Task::getProgressJson()
 {
 	ptree pt;

@@ -23,11 +23,11 @@ def send(request):
   if request.method == 'POST':
     reqData = json.loads(request.body.decode('utf-8'))
 
+    graininess = reqData['graininess']
     task = Task(status=0, user=request.user, cluster=reqData['cluster'])
     task.save()
     passwords = [Password(hash=h['hash'], algorithm=h['algorithm'], task=task, 
-      password_cracking_algorithm=h['password_cracking_algorithm'], status=0) for h in reqData['hashes']]
-
+      password_cracking_algorithm=h['password_cracking_algorithm'], status=0, graininess=graininess) for h in reqData['hashes']]
 
     for password in passwords:
       password.save()

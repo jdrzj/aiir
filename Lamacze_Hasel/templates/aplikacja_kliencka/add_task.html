@@ -54,6 +54,10 @@
                             <input type="text" name="cluster" class="form-control" placeholder="Klaster" id="id_cluster"
                                    maxlength="30" name="cluster" type="text" required/>
                         </div>
+                        <div class="form-group input-group">
+                            <span class="input-group-addon"><i class="fa fa-circle-o-notch"  ></i></span>
+                            <input type="number" name="graininess" class="form-control" placeholder="Ziarnistość" id="graininess_id" required/>
+                        </div>                      
 
                         <button type="submit" class="btn btn-success btn-sm dodaj">Dodaj</button>
 
@@ -73,6 +77,7 @@
         var algorithm = $('select[name=algorithm]').val();
         var cluster = $('input[name=cluster]').val();
         var crack_method = $('select[name=crack_method]').val();
+        var graininess = parseInt($('input[name=graininess]').val());
         var url = "/mpi_send/";
 
         if ((hash.length == 32 && algorithm == "md5") || (hash.length == 40 && algorithm == "sha1")) {
@@ -83,7 +88,7 @@
                         dataType: "json",
                         type: "POST",
                         data: JSON.stringify({'hashes':[{'hash': hash, 'algorithm': algorithm, 'password_cracking_algorithm': crack_method}],
-                                              'cluster': cluster}),
+                                              'cluster': cluster, 'graininess': graininess}),
                         success: function() {
                             window.location='/task_actual/';
                         }

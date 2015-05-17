@@ -35,6 +35,7 @@ class Password(models.Model):
 	end_time = models.DateTimeField(null=True, blank=True)
 	algorithm = models.CharField(max_length=30)
 	password_cracking_algorithm = models.CharField(max_length=2, choices=CRACKING_ALGORITHMS)
+	graininess = models.IntegerField()
 
 	def json(self, full):
 		if full:
@@ -46,10 +47,12 @@ class Password(models.Model):
 				algorithm = self.algorithm,
 				password = self.password,
 				status = self.status,
-				password_cracking_algorithm=self.password_cracking_algorithm)
+				password_cracking_algorithm=self.password_cracking_algorithm,
+				graininess=self.graininess)
 		else:
 			return json.dumps(dict(
 				id = str(self.id),
 				hash = self.hash,
 				algorithm = self.algorithm,
-				password_cracking_algorithm=self.password_cracking_algorithm))
+				password_cracking_algorithm=self.password_cracking_algorithm,
+				graininess=self.graininess))
