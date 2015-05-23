@@ -174,25 +174,58 @@ SubtaskQueue<Subtask> Task::getSubtaskQueue()
 	}
 	else if (method == 'B')
 	{
-		int bins;
-		int max = 8000000;
+		int perTask;
 		if (subtask_size == 'S')
 		{
-			bins = 10;
+			perTask = 5;
 		}
 		else if (subtask_size == 'M')
 		{
-			bins = 20;
+			perTask = 10;
 		}
 		else if (subtask_size == 'B')
 		{
-			bins = 40;
+			perTask = 25;
 		}
 		SubtaskQueue<Subtask> sq;
-		int bin_size = max/bins;
-		for (int i=0; i<bins; i++) {
-			sq.push_back({i * bin_size, (i+1) * bin_size + 1, 0});
+		// 4 znakowe hasla
+		int start_i = 1;
+		for (int i=1; i<=94; i++)
+		{
+			if (i % perTask == 0)
+			{
+				sq.push_back({start_i+32, i+32, 4});
+				start_i= i+1;
+			}
+			if (i == 94 && start_i < 94)
+			{
+				sq.push_back({start_i+32, i+32, 4});
+			}
 		}
+		// 5 znakowe hasla
+	    start_i = 1;
+	    int start_j = 1;
+	    for (int i=1; i<=94; i++)
+	    {
+	        for (int j=1; j<=94; j++)
+	        {
+	            if (((i-1)*94 + j) % perTask == 0)
+	            {
+					sq.push_back({(start_j+32)*1000 + (start_i+32), (j+32)*1000 + (i+32), 5});
+	                start_j = j+1;
+	                start_i = i;
+	                if (start_j > 94)
+	                {
+	                    start_j = 1;
+	                    start_i = i+1;
+	                }
+	            }
+	            if (i == 94 && j == 94 && start_j < 94)
+	            {
+					sq.push_back({(start_j+32)*1000 + (start_i+32), (j+32)*1000 + (i+32), 5});
+	            }
+	        }
+	    }
 		return sq;
 	}
 	// 5 przedzialow - mala ziarnistosc

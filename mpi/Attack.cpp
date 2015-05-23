@@ -86,18 +86,12 @@ std::string Attack::rainbowAttack()
 std::string Attack::bruteForceAttack()
 {
     Hash desiredHash = CryptoUtils::convertHexRepToHash(key, function);
-    std::string pass = " ";
-    int stringPosition = 0;
-    int subtask_size = chains_range_end - chains_range_start;
-    // iterate to the subtask start
-    for (int i=0; i<chains_range_start; i++)
-    {
-        CryptoUtils::incrementString(pass, stringPosition);
-    }
-    for (int i=0; i<subtask_size; i++)
+    std::string pass = CryptoUtils::generateString(chains_range_start, letters_count);
+    std::string end = CryptoUtils::generateString(chains_range_end, letters_count);
+    
+    while(pass != end)
     {
         Hash passHash;
-        //std::cout << pass << std::endl;
         if (function == HashingFunction::SHA1)
         {
             Hash tmp = CryptoUtils::generateSHA1(pass);
@@ -114,7 +108,7 @@ std::string Attack::bruteForceAttack()
         }
         else
         {
-            CryptoUtils::incrementString(pass, stringPosition);
+            CryptoUtils::incrementString(pass, 0);
         }
     }
     return "";
