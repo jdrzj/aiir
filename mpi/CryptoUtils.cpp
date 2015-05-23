@@ -84,3 +84,18 @@ void CryptoUtils::incrementString(std::string &s, int stringPosition) {
         }
     }
 }
+
+std::string CryptoUtils::generateString(int letter, int length)
+{
+	std::string result (length, '!');
+	if (letter > 1000)
+	{
+		result[length-2] = static_cast<char>(letter / 1000);
+		result[length-1] = static_cast<char>(letter % 1000);
+	}
+	else
+	{
+		result[length-1] = static_cast<char>(letter);
+	}
+	return result;
+}
