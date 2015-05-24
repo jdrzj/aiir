@@ -75,11 +75,11 @@ bool CryptoUtils::areHashesEqual(Hash& first, Hash& second)
 // Inkrementuje ciag znakow.
 void CryptoUtils::incrementString(std::string &s, int stringPosition) {
     if(s.size() <= stringPosition) {
-        s.append(" ");
+        s.append("!");
     } else {
         s[stringPosition] = s[stringPosition] + 1;
         if(s[stringPosition] > 126) {
-            s[stringPosition] = ' ';
+            s[stringPosition] = '!';
             incrementString(s, stringPosition+1);
         }
     }

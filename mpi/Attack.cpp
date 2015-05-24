@@ -89,9 +89,10 @@ std::string Attack::bruteForceAttack()
     std::string pass = CryptoUtils::generateString(chains_range_start, letters_count);
     std::string end = CryptoUtils::generateString(chains_range_end, letters_count);
     
-    while(pass != end)
+    while(true)
     {
         Hash passHash;
+        // zahashuj string
         if (function == HashingFunction::SHA1)
         {
             Hash tmp = CryptoUtils::generateSHA1(pass);
@@ -102,10 +103,17 @@ std::string Attack::bruteForceAttack()
             Hash tmp = CryptoUtils::generateMD5(pass);
             passHash = tmp;
         }
+        // porownaj z poszukiwanym wzorcem
         if(CryptoUtils::convertHashToHexRep(passHash) == this->key) 
         {
             return pass;
         }
+        // warunek przerwania petli
+        else if (pass == end)
+        {
+            break;
+        }
+        // inkrementacja stringa - dalsze poszukiwanie
         else
         {
             CryptoUtils::incrementString(pass, 0);
