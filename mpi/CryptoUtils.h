@@ -86,7 +86,8 @@ public:
 	static Hash convertHexRepToHash(const std::string& hex_hash, HashingFunction function);
 	static bool areHashesEqual(Hash& first, Hash& second);
 	static void incrementString(std::string &s, int stringPosition);
-	static std::string generateString(int letter, int length);
+	static std::string generateStartString(int letter, int length);
+	static std::string generateEndString(int letter, int length);
 
 };
 

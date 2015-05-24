@@ -177,17 +177,23 @@ SubtaskQueue<Subtask> Task::getSubtaskQueue()
 		int perTask;
 		if (subtask_size == 'S')
 		{
-			perTask = 5;
+			perTask = 1;
 		}
 		else if (subtask_size == 'M')
 		{
-			perTask = 10;
+			perTask = 3;
 		}
 		else if (subtask_size == 'B')
 		{
-			perTask = 25;
+			perTask = 10;
 		}
 		SubtaskQueue<Subtask> sq;
+		// 1 znakowe hasla
+		sq.push_back({33, 126, 1});
+		// 2 znakowe hasla
+		sq.push_back({33, 126, 2});
+		// 3 znakowe hasla
+		sq.push_back({33, 126, 3});
 		// 4 znakowe hasla
 		int start_i = 1;
 		for (int i=1; i<=94; i++)
@@ -220,7 +226,7 @@ SubtaskQueue<Subtask> Task::getSubtaskQueue()
 	                    start_i = i+1;
 	                }
 	            }
-	            if (i == 94 && j == 94 && start_j < 94)
+	            if (i == 94 && j == 94 && start_i < 94 && start_j < 94)
 	            {
 					sq.push_back({(start_j+32)*1000 + (start_i+32), (j+32)*1000 + (i+32), 5});
 	            }

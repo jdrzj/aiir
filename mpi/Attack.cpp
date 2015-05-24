@@ -86,9 +86,10 @@ std::string Attack::rainbowAttack()
 std::string Attack::bruteForceAttack()
 {
     Hash desiredHash = CryptoUtils::convertHexRepToHash(key, function);
-    std::string pass = CryptoUtils::generateString(chains_range_start, letters_count);
-    std::string end = CryptoUtils::generateString(chains_range_end, letters_count);
-    
+    std::string pass = CryptoUtils::generateStartString(chains_range_start, letters_count);
+    std::string end = CryptoUtils::generateEndString(chains_range_end, letters_count);
+    std::cout << pass << " -> " << end << std::endl;
+
     while(true)
     {
         Hash passHash;
@@ -118,6 +119,7 @@ std::string Attack::bruteForceAttack()
         {
             CryptoUtils::incrementString(pass, 0);
         }
+        //std::cout << pass << std::endl;
     }
     return "";
 }
