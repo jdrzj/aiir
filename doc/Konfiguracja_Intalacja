@@ -1,0 +1,44 @@
+#### MPI ####
+Konfiguracja/Intalacja:
+Sprawdzony system operacyjny to Ubuntu 14.04.2-LTS z jądrem 3.13.0-53-generic.
+Przetestowana implementacja mpi to OpenMpi 1.6.5.
+
+Wymagane pakiety z repozytorium ubuntu do kompilacji to:
+  -openmpi-bin 
+  -openmpi-common  
+  -libopenmpi-dev 
+  -libopenmpi1.6-dbg 
+  -libopenmpi1.6 
+  -build-essential (make, gcc...)
+  -libtool
+  -pkg-config
+  -autoconf 
+  -automake 
+  -cmake 
+  -libssl-dev
+Wymagana biblioteka niedostępna repozytorium to zeroMQ w wersji 4.1.0-rc1
+Oraz nagłówki dla C++ do pobrania z: https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp
+  (umieścić w /usr/local/include)
+
+Wymagane opogramowanie do uruchomienia programu to:
+  -openssh-client (slave & slave)
+  -openssh-server (master & slave)
+  -nfs-kernel-server (master)
+  -nfs-common (slave)
+
+Wymagana konfiguracja do uruchomienia klastra to:
+  -utworzenie użytkonika vagrant (master & slaves)
+  -w katalogu domowym utworzyć plik .mpi_np - w którym zapisać liczbę procesów do uruchomienia przez klaster (ilość rdzeni w klastrze) (master)
+  -w katalogu domowym utworzyć plik .mpi_hostfile w którym zapisać zgodnie dokumentacją OpenMpi nazwy slavów (jeżeli w sieci znajduje się server dns z wpisami slavów/bądź jeżeli nazwy rozwiązane są w pliku /etc/hosts) lub ich adresy. Po każdym wpisie można określiść ilość procesów jaka ma być uruchomiona na danym slave/maksymalna oraz minimalną liczbę procesów. (master)
+  -do katalogu /etc/init.d skopiować dostarczony skrypt mpi_run_script z nazwą mpi oraz nadać prawa wykonywania dla użytkownika vagrant (skrypt uruchamiany jest przez django które łączy się przez ssh do mastera, w skrypcie eksportowane są ustawienia klastra dostarczone przez django oraz uruchamiane jest mpi jako demon) (master)
+  -utworzyć katalog /vagrant oraz nadać rekurencyjnie właściela - użytkownik vagrant (master & slaves)
+  -udostępnić katalog /vagrant poprzez nfs2/3 dla każdego hosta w sieci klastra (master)
+  -podmontować i/lub dodać wpis do /etc/fstab montujący przy uruchomieniu udostępniony przez mastera katalog /vagrant do lokalnego katalogu /vagrant (slaves)
+  -wygenerować klucz publiczny i prywatny (master)
+  -zaimportować klucz publiczny mastera do pliku ~/.ssh/authorized_keys (slaves)
+  -dodać wpis do konfiguracji ssh dla każdego hosta "Host *\n\tStrictHostKeyChecking no" (slaves & master)
+
+#### Django #### (Piotrek/Maciek dopiszcie coś bo wiecie lepiej)
+-python3/pip
+-z pip3 django
+-z pip3 paramiko oraz pyzmq
