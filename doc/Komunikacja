@@ -1,0 +1,31 @@
+"Specka" komunikacji
+
+Format przyjmowany przez POST /mpi_send
+
+{ 
+ "hashes": [{ 
+   "hash":"111", 
+   "algorithm": "md5" 
+ },{ 
+   "hash":"2", 
+   "algorithm": "sha1" 
+ }], 
+ "cluster": "0",
+ "graininess": 1/2/3 
+} 
+gdzie cluster to identyfikator klastra na którym chcemy wykonać zadanie
+gdzie graininess to poziom ziarnostości dla zadania.
+
+Sockety przez jakie komunikują się Django i master klastra to sockety ZeroMQ. 
+Twórcy tej biblioteki/frameworka nazywają swoje sockety socketami na sterydach. 
+Wiadomości przesyłane są w architekturze PUB - SUB zarówno od Django jak i od MPI. 
+Wiadomości to zwyczajne stringi jednak każdy SUB rejestruje jakie wiadomości go interesują. 
+Filtr ten odsiewa wiadomości nie zaczynające się od zarejestrowanego znaku/stringa (cluster_id). 
+ClusterId ustawiany jest jako zmienna środowiskowa przed uruchomieniem mpi przez połączenie ssh. 
+Następnie w skrypcie startującym mpi zmienna ta przekazywana jest jako parametr wywołania mpirun. 
+Ostateczna forma wiadomości kierowanej do klastra o id "1" wygląda następująco: 
+"1 {"id": "12", "hash": "21uwuh2rf1", "algorithm": "md5/sha1", "graininess": 1/2/3}"
+
+Wiadomości zwrotne tagowane są literą D gdyż takich wiadomości nasłuchuje Django. 
+Wiadomość zwrotna: 
+"D {"id": "12", "password": "trudneHaslo", "start_time": 123, "end_time": 321}"
