@@ -1,0 +1,29 @@
+OPIS ALGORYTMU
+Algorytm Brute Force realizuje idee przegladu zupelnego dla problemu lamania hasel. Innymi slowy generuje oraz sprawdza funkcje skrótu dla wszystkich mozliwe kombinacje znaków. Oprócz wartosci funkcji skrótu poszukiwanego hasla, parametrami algorytmu sa takze poczatkowy oraz koncowy ciag znaków. Okreslaja one jednoznacznie granice zbioru hasel, w którym poszukiwane bedzie haslo. Takie podejscie umozliwia zastosowanie algorytmu w aplikacjach wielowatkowych.
+
+SPOSÓB IMPLEMENTACJI
+Praca algorytmu wyglada w nastepujacy sposób:
+
+1. Pobranie parametrów wywolania. Sa to poszukiwana wartosc funkcji skrótu, poczatkowy ciag znaków, koncowy ciag znaków. Poszukiwania hasla zaczynaja sie naturalnie od poczatkowego ciagu znaków.
+2. Obliczenie wartosci funkcji skrótu dla ciagu znaków. Do generowania wartosci funkcji skrótu SHA-1 oraz MD5 wykorzystano biblioteke OpenSSL.
+3. Porównanie obliczonej wartosci z wartoscia poszukiwana.
+4. Jesli wynik porównania jest pozytywny, wtedy algorytm konczy prace oraz zwraca znaleziony ciag znaków.
+5. W przeciwnym przypadku nastepuje wygenerowanie kolejnego ciagu znaków poprzez jego inkrementacje. Szczególy implementacji tej funkcjonalnosci zostaly opisane w kolejnej sekcji.
+6. Algorytm konczy prace jesli wygenerowany ciag znaków jest równy koncowej wartosci podanej w parametrze wywolania.
+
+Przyjeto, ze algorytm sprawdza mozliwe kombinacje w podanym zakresie dla wszystkich drukowalnych znaków ASCII, lacznie jest ich 94. 
+
+WAZNE FRAGMENTY KODU
+Inkrementacje ciagu znaków mozna rozumiec jak inkrementacje liczby w takim systemie liczbowym, gdzie sa 94 cyfry reprezentowane przez kolejne drukowalne znaki kodu ASCII. Cyfra o najnizszej wartosci w tym kodzie jest ! (wykrzyknik), a o najwiekszej ~ (tylda). W operacji wziato pod uwage przeniesienie przy dodawaniu.
+
+void CryptoUtils::incrementString(std::string &s, int stringPosition) {
+    if(s.size() <= stringPosition) {
+        s.append("!");
+    } else {
+        s[stringPosition] = s[stringPosition] + 1;
+        if(s[stringPosition] > 126) {
+            s[stringPosition] = '!';
+            incrementString(s, stringPosition+1);
+        }
+    }
+}
