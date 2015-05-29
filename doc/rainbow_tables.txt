@@ -1,0 +1,38 @@
+
+OPIS ALGORYTMU
+
+Łamanie haseł przy pomocy tablic tęczowych polega na połączeniu dwóch innych metod rozwiązywania tego problemu - brute force i słownikowej. Na podstawie obliczonych skrótów generowane są kolejne ciągi znaków aż do wygenerowania określonej liczby haseł zawartych w danym łańcuchu. Metoda tablic tęczowych pozwala na oszczędzenie mocy obliczeniowej w stosunku do algorytmu brute force - nie ma potrzeby generowania kolejnych możliwych kombinacji łańcuchów znakowych, zamiast tego wykorzystuje się wygenerowane wcześniej skróty. Kolejną z zalet metody tablic tęczowych jest znaczne ograniczenie powierzchni zajmowanej przez wygenerowane zbiory skrótów w stosunku do rozmiarów danych wykorzystywanych przez metodę tablic tęczowych.
+
+Do wygenerowania kolejnych haseł w metodzie tablic tęczowych wykorzystuje się tzw. funkcję redukującą. Generuje ona nowy ciąg znaków na podstawie bieżącego. Przy znajomości funkcji redukującej i jej parametrów, możliwe jest odtworzenie całego łańcucha haseł. Przy generowaniu tablic tęczowych istotne jest zapobieganie kolizjom hashy, co jest często realizowane poprzez na przykład wykorzystywanie funkcji redukującej, której wynik zależy od aktualnie analizowanego wiersza.
+
+
+SPOSÓB IMPLEMENTACJI
+
+Metoda łamania haseł przy wykorzystaniu haseł tęczowych została zaimplementowana w klasie RainbowCracker. Z uwagi na ograniczenia sprzętowe (wygenerowanie tablic tęczowych jest intensywne obliczeniowo) algorytm jest w stanie złamać stosunkowo krótkie (ok. 4 znaków) hasła składające się z cyfr i stanowi raczej "proof of concept" niż pełne rozwiązanie problemu. Redukcja danego ciągu znaków polega na pobraniu z niego ilości cyfr odpowiadającej aktualnie analizowanej długości hasła. Brakujące cyfry uzupełniane są zerami. Metoda tablic tęczowych potrafi złamać hasła, które zostały przetworzone za pomocą funkcji SHA-1 i MD5.
+
+WAŻNE FRAGMENTY KODU
+
+Funkcja redukująca:
+
+std::string RainbowCracker::reduce(Hash& hash, int position, int table_index, int password_length)
+{
+	int extracted_digits = 0;
+	std::string new_key;
+	std::string hex_rep = CryptoUtils::convertHashToHexRep(hash);
+	for (auto it = hex_rep.begin(); it != hex_rep.end(); ++it)
+	{
+		unsigned char tmp = *it;
+		if (tmp >= '0' && tmp <= '9')
+		{
+			new_key += tmp;
+			if (++extracted_digits == password_length)
+				break;
+		}
+	}
+	if (extracted_digits < password_length)
+	{
+		for (int i = 0; i < password_length - extracted_digits; ++i)
+			new_key += "0";
+	}
+	return new_key;
+}
