@@ -1,0 +1,89 @@
+Dokumentacja powykonawcza
+
+1. Środowisko pracy
+
+Wszystkie węzły klastra obliczeniowego wymagają do swojego działania systemu Linux. Poniższe wskazówki dot. wymaganych bibliotek i pakietów pozwalają na pełną konfigurację węzła z systemem operacyjnym Ubuntu 14.04.2-LTS z jądrem 3.13.0-53-generic. W wypadku korzystania z innych wersji/dystrybucji może zaistnieć potrzeba instalacji innych pakietów.
+
+2. Aplikacja wykonująca obliczenia (C++)
+
+2.1 Kompilacja
+
+Aby poprawnie skompilować aplikację wykonującą obliczenia na danym węźle należy ściągnąć z repozytorium systemu Ubuntu następujące pakiety:
+
+- openmpi-bin 
+- openmpi-common  
+- libopenmpi-dev 
+- libopenmpi1.6-dbg 
+- libopenmpi1.6 
+- build-essential
+- libtool
+- pkg-config
+- autoconf 
+- automake 
+- cmake 
+- libssl-dev
+
+Należy pobrać też niedostępną w repozytorium systemu Ubuntu bibliotekę ZeroMQ. Biblioteka dostępna jest na stronie http://zeromq.org/ w formacie *.tar.gz. Po ściągnięciu i rozpakowaniu ZeroMQ, należy odpowiednio wywołać komendy "configure", "make" i "make install". Więcej informacji dot. konfiguracji ZeroMQ można odnaleźć na stronie twórców bibliotei. Potrzebne do poprawnego działania nagłówki dla języka C++ dostępne są w repozytorium GitHub: https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp. Po pobraniu należy umieścić plik zmq.hpp w folderze /usr/local/include.
+
+Kod źródłowy aplikacji wykonującej obliczenia (folder "mpi" w folderze głównym repozytorium) należy umieścić w katalogu /vagrant na węźle typu "master", a następnie zbudować wydając polecenie "make".
+
+2.2 Uruchomienie
+
+Aby zapewnić możliwość łatwej modyfikacji klastra, każdy z węzłów powinien posiadać oprogramowanie umożliwiające mu pracę zarówno w trybie "slave" jak i "master".
+
+Wymagane pakiety:
+
+- openssh-client
+- openssh-server
+- nfs-common
+- nfs-kernel-server
+
+2.3 Konfiguracja węzła jako część klastra
+
+2.3.1 Węzeł typu "slave"
+
+- Utworzenie użytkownika "vagrant".
+- Utworzenie katalogu /vagrant oraz nadanie rekurencyjnie właściela (wcześniej stworzony użytkownik "vagrant").
+- Dodanie do /etc/fstab wpisu montującego udostępniony przez węzeł typu "master" przez NFS katalogu /vagrant do lokalnego katalogu /vagrant.
+- Import klucza publicznego wygenerowany na węźle master do pliku ~/.ssh/authorized_keys (użytkownik "vagrant").
+- Dodanie wpisu do konfiguracji SSH dla każdego hosta "Host *\n\tStrictHostKeyChecking no".
+
+2.3.2 Węzeł typu "master"
+
+- Utworzenie użytkownika "vagrant".
+- Utworzenie katalogu /vagrant oraz nadanie rekurencyjnie właściela (wcześniej stworzony użytkownik "vagrant").
+- Utworzenie pliku .mpi_np w katalogu domowym użytkownika "vagrant". Zapisanie w nim liczby procesów do uruchomienia przez klaster.
+- Utworzenie pliku .mpi_hostfile w katalogu domowym użytkownika "vagrant". Zapisanie w nim zgodnie dokumentacją OpenMPI nazw węzłów typu "slave" (jeżeli w sieci znajduje się server DNS z wpisami dot. węzłów typu "slave bądź jeżeli nazwy rozwiązane są w pliku /etc/hosts) lub ich adresy. Określenie ilości procesów, jaka ma być uruchomiona na danym węźle typu slave - maksymalnej oraz minimalnej liczby.
+- Skopiowanie do katalogu /etc/init.d dostarczony skrypt mpi_run_script z nazwą mpi oraz nadanie prawa wykonywania dla użytkownika "vagrant" (skrypt uruchamiany jest przez Django, które łączy się z węzłem master przez SSH, w skrypcie eksportowane są ustawienia klastra dostarczone przez Django oraz aplikacja wykonująca obliczenia jest uruchamiana jako demon).
+- Udostępnienie katalogu /vagrant poprzez NFS dla każdego
+ hosta w sieci klastra.
+- Wygenerowanie klucza publicznego i prywatnego.
+- Dodanie wpisu do konfiguracji SSH dla każdego hosta "Host *\n\tStrictHostKeyChecking no".
+
+3. Serwer aplikacji klienckiej (Python, Django)
+
+Serwer aplikacji klienckiej powstał w oparciu o język Python 3 (testowana dla wersji Python 3.4.0) oraz framework Django w wersji 1.7.2.
+
+3.1 Wymagane biblioteki
+
+Do poprawnego działania aplikacji klienckiej wymagane są następujące pakiety z repozytorium Ubuntu:
+
+- python3-pip
+
+Pakiety instalowane za pośrednictwem pip:
+
+- django
+- paramiko
+- pyzmq
+
+3.2 Konfiguracja
+
+W pliku settings.py znajdującym się w folderze Lamacze_Hasel/Lamacze_Hasel należy zmodyfikować zawartość zmiennych MY_SOCKET_ADDRESS oraz CLUSTERS. W pierwszej powinien znaleźć się adres adres IP serwera aplikacji klienckiej widoczny w sieci klastra wraz z portem 5557. W drugiej natomiast należy umieśić dane dot. adresu węzła typu "master" klastra. W polu "address" jego IP w sieci klastra, a w polu socket_address jego IP wraz z portem 5557. Przykładowa konfiguracja:
+
+MY_SOCKET_ADDRESS = 'tcp://172.28.128.1:5557'
+CLUSTERS = [{'id':'1', 'address': '172.28.128.3', 'username': 'vagrant', 'password': 'vagrant', 'socket_address':'tcp://172.28.128.3:5558'}]
+
+
+3.3 Uruchomienie
+
+Aby uruchomić serwer aplikacji klienckiej należy przejść do folderu Lamacze_Hasel i wydać polecenie "python3 manage.py runserver". Uruchomienie serwera aplikacji klienckiej spowoduje uruchomienie całego klastra obliczeniowego zgodnie ze stworzoną konfiguracją.
