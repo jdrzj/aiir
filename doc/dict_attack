@@ -1,0 +1,88 @@
+OPIS ALGORYTMU
+
+Atak słownikowy to technika siłowego odgadywania haseł, jest w pewien sposób zbliżona do brute force. W tej metodzie ważny jest słownik, który jest niezbędny. Każde słowo z takiego słownika jest porównywane z hasłem, po wcześniejszym obliczeniu wartości funkcji skrótu. Ataki są skuteczne tam, gdzie systemy nie używają wielowyrazowych fraz. W naszej implementacji algorytmu kombinacje dużych i małych liter nie chronią przed atakiem.
+Wyższość ataku słownikowego nad bruteforcem to krótszy czas działania w systemach, gdzie ludzie ustawiają hasła. Z kolei atak słownik nie zadziała tam gdzie są ustawione kombinacje znaków, których nie ma w słowniku.
+
+
+SPOSÓB IMPLEMENTACJI
+1. Wczytanie pliku słownika.
+2. Wczytanie jednego hasła ze słownika. Hasło zostaje przekazane do funkcji hackify, która z pomocą liczb zapisanych dwójkowo, modyfikuje hasło zmieniając wielkość liter. Przykład:
+    hasło: mail     reprezentacja bitowa: 0000
+    hasło: Mail     reprezentacja bitowa: 1000
+    hasło: mAiL     reprezentacja bitowa: 1010
+3. Każde hasło zmodyfikowane w funkcji hackify, zostaje przekazane do funkcji checkSuffixes, gdzie najpierw się oblicza skrót MD5 lub SHA1, a następnie jeśli hasło nie jest złamane, zostają dodane przyrostki, które są wszystkimi znakami ASCII oprócz liter. Przykład:
+    Funkcja checkSuffixes dostała hasło "leMOn" od funkcji hackify:
+    leMOn1 -> leMOn2 -> leMOn3 -> ... -> leMOn! -> ... -> leMOn1! -> leMOn1@ -> ... -> leMOn!@
+4. Każdą kombinację hasła jest sprawdzana, jeśli hasło nie jest złamane i wszystkie kombinacje zostały sprawdzone, algorytm pobiera następne hasło i rozpoczyna procedurę.
+
+--
+Obecnie prawie wszystkie systemy wymagają haseł z wielkimi literami, cyfry i znaku specjalnego. Dzięki funkcjom hackify i checkSuffixes mamy większe prawdopodobieństwo złamania hasła. Bez nich wczytujemy hasła i tylko sprawdzamy czy jest takie same. Dzięki temu możemy ograniczyć słownik do tych haseł, które składają się tylko z liter. W programie używamy słownika, który posiada ponad 300 000.
+
+WAŻNE FRAGMENTY KODU
+
+funkcja modyfikująca wielkość liter:
+  std::string Attack::hackify(std::string pass)
+  {
+      std::string s;
+      std::string pass2;
+      std::string result = "";
+      int x = pass.length();
+      for(int i = 0; i < pow(2, pass.length()); i++)
+      {
+          pass2 = pass;
+          const boost::dynamic_bitset<> b2(x, i);
+          boost::to_string(b2, s);
+          for(int j = 0; j < s.length(); j++)
+          {
+              if(s[j] == '1')
+              {
+                  pass2[j] = toupper(pass[j]);
+              }
+              else if (s[j] == '0')
+              {
+                  pass2[j] = tolower(pass[j]);
+              }
+          }
+          result = checkSuffixes(pass2, 0);
+          if (result != "")
+              break;
+      }
+      return result;
+  }
+
+funkcja doklejająca przyrostki:
+
+  std::string Attack::checkSuffixes(std::string pass, int level)
+  {
+      const int max_level = 3;
+      std::string result = "";
+      if(level != max_level)
+      {
+          std::string pass2 = pass;
+          for(int i = 0; i < suffixes.length(); i++)
+          {
+              Hash h;
+              if (function == HashingFunction::SHA1)
+              {
+                  Hash tmp = CryptoUtils::generateSHA1(pass2);
+                  h = tmp;
+              }
+              else if (function == HashingFunction::MD5)
+              {
+                  Hash tmp = CryptoUtils::generateMD5(pass2);
+                  h = tmp;
+              }
+              if(CryptoUtils::convertHashToHexRep(h) == this->key)
+              {
+                  result = pass2;
+                  break;
+              }
+              pass2 = pass;
+              pass2 += suffixes[i];
+              result = checkSuffixes(pass2, level+1);
+              if (result != "")
+                  break;
+          }
+      }
+      return result;
+  }
